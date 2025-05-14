@@ -11,51 +11,13 @@ class OrganizationProfilesSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     * To complete profile: 'name', 'industry', 'description', 'location'
      */
     public function run(): void
     {
         $now = Carbon::now();
 
         DB::table('organization_profiles')->insert([
-            // [
-            //     'user_id'      => 1,
-            //     'name' => 'Alpha Tech',
-            //     'description'  => 'Leading provider of innovative software solutions.',
-            //     'industry'     => 'Information Technology',
-            //     'company_size' => '50-100',
-            //     'website'      => 'https://alphatech.example.com',
-            //     'logo'    => null,
-            //     'phone'        => '01-5551001',
-            //     'location'      => 'Kathmandu, Nepal',
-            //     'created_at'   => $now,
-            //     'updated_at'   => $now,
-            // ],
-            // [
-            //     'user_id'      => 2,
-            //     'name' => 'Beta Solutions',
-            //     'description'  => 'Enterprise-level consulting and IT services.',
-            //     'industry'     => 'Consulting',
-            //     'company_size' => '200-500',
-            //     'website'      => 'https://betasolutions.example.com',
-            //     'logo'    => null,
-            //     'phone'        => '01-5551002',
-            //     'location'      => 'Lalitpur, Nepal',
-            //     'created_at'   => $now,
-            //     'updated_at'   => $now,
-            // ],
-            // [
-            //     'user_id'      => 3,
-            //     'name' => 'Gamma Ventures',
-            //     'description'  => 'Venture capital firm investing in tech startups.',
-            //     'industry'     => 'Finance',
-            //     'company_size' => '20-50',
-            //     'website'      => 'https://gammaventures.example.com',
-            //     'logo'    => null,
-            //     'phone'        => '01-5551003',
-            //     'location'      => 'Pokhara, Nepal',
-            //     'created_at'   => $now,
-            //     'updated_at'   => $now,
-            // ],
             [
                 'user_id'      => 5,
                 'name' => 'Delta Dynamics',
@@ -66,6 +28,7 @@ class OrganizationProfilesSeeder extends Seeder
                 'logo'    => null,
                 'phone'        => '01-5551004',
                 'location'      => 'Chitwan, Nepal',
+                'is_complete' => true,
                 'created_at'   => $now,
                 'updated_at'   => $now,
             ],
@@ -79,6 +42,7 @@ class OrganizationProfilesSeeder extends Seeder
                 'logo'    => null,
                 'phone'        => '01-5551005',
                 'location'      => 'Biratnagar, Nepal',
+                'is_complete' => true,
                 'created_at'   => $now,
                 'updated_at'   => $now,
             ],
@@ -92,6 +56,7 @@ class OrganizationProfilesSeeder extends Seeder
                 'logo'    => null,
                 'phone'        => '01-5551006',
                 'location'      => 'Kathmandu, Nepal',
+                'is_complete' => true,
                 'created_at'   => $now,
                 'updated_at'   => $now,
             ],
