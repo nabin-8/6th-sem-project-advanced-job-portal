@@ -42,27 +42,10 @@
                                 <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
                                 <button class="btn btn-outline-secondary" type="button" id="togglePassword">
                                     <i class="far fa-eye"></i>
-                                </button>
-                            </div>
+                                </button>                        </div>
                             @error('password')
                                 <span class="text-danger small">{{ $message }}</span>
                             @enderror
-                        </div>
-
-                        <!-- Role Selection (only if user has multiple roles) -->
-                        <div class="mb-3">
-                            <label class="form-label">Login as:</label>
-                            <div class="btn-group w-100" role="group">
-                                <input type="radio" class="btn-check" name="active_role" id="candidate-role" value="Candidate" checked>
-                                <label class="btn btn-outline-primary" for="candidate-role">
-                                    <i class="fas fa-user-tie me-2"></i>Candidate
-                                </label>
-                                
-                                <input type="radio" class="btn-check" name="active_role" id="organization-role" value="Organization">
-                                <label class="btn btn-outline-primary" for="organization-role">
-                                    <i class="fas fa-building me-2"></i>Organization
-                                </label>
-                            </div>
                         </div>
 
                         <div class="mb-3 form-check">

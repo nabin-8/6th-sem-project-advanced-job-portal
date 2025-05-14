@@ -253,7 +253,7 @@
                                                     <span class="badge bg-secondary">Closed</span>
                                                 @endif
                                             </td>
-                                            <td>{{ \Carbon\Carbon::parse($job->application_deadline)->format('M d, Y') }}</td>
+                                            <td>{{ $job->application_deadline ? \Carbon\Carbon::parse($job->application_deadline)->format('M d, Y') : 'No deadline set' }}</td>
                                             <td>
                                                 <div class="btn-group">
                                                     <a href="{{ route('jobs.edit', $job->id) }}" class="btn btn-sm btn-outline-primary">

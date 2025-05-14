@@ -4,15 +4,14 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
         <h1 class="h2">Job Details</h1>
-        <div class="btn-toolbar mb-2 mb-md-0">
-            <div class="btn-group me-2">
-                <a href="{{ route('organizations.show', $job->organization) }}" class="btn btn-sm btn-outline-primary">
+        <div class="btn-toolbar mb-2 mb-md-0">            <div class="btn-group me-2">
+                <a href="{{ route('admin.organizations.show', $job->organization) }}" class="btn btn-sm btn-outline-primary">
                     <i class="fas fa-building me-1"></i> Organization
                 </a>
-                <a href="{{ route('jobs.edit', $job) }}" class="btn btn-sm btn-outline-primary">
+                <a href="{{ route('admin.jobs.edit', $job) }}" class="btn btn-sm btn-outline-primary">
                     <i class="fas fa-edit me-1"></i> Edit
                 </a>
-                <a href="{{ route('jobs.index') }}" class="btn btn-sm btn-outline-secondary">
+                <a href="{{ route('admin.jobs.index') }}" class="btn btn-sm btn-outline-secondary">
                     <i class="fas fa-arrow-left me-1"></i> Back to List
                 </a>
             </div>
@@ -59,10 +58,8 @@
                             <p>{{ $job->requirements }}</p>
                         @endif
 
-                    </div>
-
-                    <div class="d-flex mt-4">
-                        {{-- <form action="{{ route('jobs.toggleStatus', $job) }}" method="POST" class="me-2">
+                    </div>                    <div class="d-flex mt-4">
+                        {{-- <form action="{{ route('admin.jobs.toggleStatus', $job) }}" method="POST" class="me-2">
                             @csrf
                             @method('PUT')
                             <button type="submit" class="btn {{ $job->status === 'open' ? 'btn-warning' : 'btn-success' }}">
@@ -70,7 +67,7 @@
                             </button>
                         </form> --}}
 
-                        <form action="{{ route('jobs.destroy', $job) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this job? All associated applications will also be deleted.')">
+                        <form action="{{ route('admin.jobs.destroy', $job) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this job? All associated applications will also be deleted.')">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger">Delete Job</button>
@@ -95,8 +92,7 @@
                     @if($job->organization->description)
                     <p class="mb-3">{{ Str::limit($job->organization->description, 100) }}</p>
                     @endif
-                    
-                    <a href="{{ route('organizations.show', $job->organization) }}" class="btn btn-sm btn-outline-primary">
+                          <a href="{{ route('admin.organizations.show', $job->organization) }}" class="btn btn-sm btn-outline-primary">
                         View Organization
                     </a>
                 </div>
@@ -110,7 +106,7 @@
                     @if($job->applications->count() > 0)
                         <div class="list-group">
                             @foreach($job->applications as $application)
-                                <a href="{{ route('applications.show', $application) }}" class="list-group-item list-group-item-action">
+                                <a href="{{ route('admin.applications.show', $application) }}" class="list-group-item list-group-item-action">
                                     <div class="d-flex w-100 justify-content-between">
                                         <h6 class="mb-1">{{ $application->candidate->user->name }}</h6>
                                         <small>

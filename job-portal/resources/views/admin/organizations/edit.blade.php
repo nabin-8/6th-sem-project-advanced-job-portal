@@ -5,11 +5,10 @@
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
         <h1 class="h2">Edit Organization</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
-            <div class="btn-group me-2">
-                <a href="{{ route('organizations.show', $organization) }}" class="btn btn-sm btn-outline-secondary">
+            <div class="btn-group me-2">                <a href="{{ route('admin.organizations.show', $organization) }}" class="btn btn-sm btn-outline-secondary">
                     <i class="fas fa-eye me-1"></i> View Details
                 </a>
-                <a href="{{ route('organizations.index') }}" class="btn btn-sm btn-outline-secondary">
+                <a href="{{ route('admin.organizations.index') }}" class="btn btn-sm btn-outline-secondary">
                     <i class="fas fa-arrow-left me-1"></i> Back to List
                 </a>
             </div>
@@ -20,8 +19,7 @@
         <div class="card-header">
             <i class="fas fa-building me-1"></i> Edit Organization Details
         </div>
-        <div class="card-body">
-            <form action="{{ route('organizations.update', $organization) }}" method="POST" enctype="multipart/form-data">
+        <div class="card-body">            <form action="{{ route('admin.organizations.update', $organization) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
                 

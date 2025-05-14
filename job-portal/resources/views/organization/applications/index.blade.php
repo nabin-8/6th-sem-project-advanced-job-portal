@@ -50,14 +50,17 @@
                             {{ ucfirst($job->status) }}
                         </span>
                     </p>
-                    <p class="mb-2"><strong>Posted on:</strong> {{ $job->created_at->format('M d, Y') }}</p>
-                    <p class="mb-0">
+                    <p class="mb-2"><strong>Posted on:</strong> {{ $job->created_at->format('M d, Y') }}</p>                    <p class="mb-0">
                         <strong>Application Deadline:</strong> 
-                        {{ $job->application_deadline->format('M d, Y') }}
-                        @if($job->application_deadline->isPast())
-                            <span class="badge bg-danger ms-2">Expired</span>
+                        @if($job->application_deadline)
+                            {{ $job->application_deadline->format('M d, Y') }}
+                            @if($job->application_deadline->isPast())
+                                <span class="badge bg-danger ms-2">Expired</span>
+                            @else
+                                <span class="badge bg-success ms-2">{{ $job->application_deadline->diffForHumans() }}</span>
+                            @endif
                         @else
-                            <span class="badge bg-success ms-2">{{ $job->application_deadline->diffForHumans() }}</span>
+                            <span class="text-muted">No deadline set</span>
                         @endif
                     </p>
                 </div>

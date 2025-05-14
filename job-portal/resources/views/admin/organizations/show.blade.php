@@ -97,8 +97,7 @@
                                         </td>
                                         <td>{{ $job->applications->count() }}</td>
                                         <td>{{ $job->created_at->format('M d, Y') }}</td>
-                                        <td>
-                                            <a href="{{ route('jobs.show', $job) }}" class="btn btn-sm btn-info">
+                                        <td>                                            <a href="{{ route('admin.jobs.show', $job) }}" class="btn btn-sm btn-info">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                         </td>
@@ -118,7 +117,7 @@
                     <i class="fas fa-exclamation-triangle me-1"></i> Danger Zone
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('organizations.destroy', $organization) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this organization? This will also delete all associated jobs.');">
+                    <form action="{{ route('admin.organizations.destroy', $organization) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this organization? This will also delete all associated jobs.');">
                         @csrf
                         @method('DELETE')
                         <div class="d-grid">

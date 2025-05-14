@@ -33,15 +33,14 @@
                             <td>{{ $organization->user->email }}</td>
                             <td>{{ $organization->industry ?? 'N/A' }}</td>
                             <td>{{ $organization->jobs->count() }}</td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <a href="{{ route('organizations.show', $organization) }}" class="btn btn-sm btn-info">
+                            <td>                                <div class="btn-group" role="group">
+                                    <a href="{{ route('admin.organizations.show', $organization) }}" class="btn btn-sm btn-info">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <a href="{{ route('organizations.edit', $organization) }}" class="btn btn-sm btn-primary">
+                                    <a href="{{ route('admin.organizations.edit', $organization) }}" class="btn btn-sm btn-primary">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('organizations.destroy', $organization) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this organization?')">
+                                    <form action="{{ route('admin.organizations.destroy', $organization) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this organization?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger">

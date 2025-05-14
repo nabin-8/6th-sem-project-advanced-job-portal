@@ -104,13 +104,21 @@
                     </li>
                 </ul>
                 
-                <div class="header-actions d-flex align-items-center">
-                    @guest
+                <div class="header-actions d-flex align-items-center">                    @guest
                         <a href="{{ route('login') }}" class="btn btn-outline-light btn-sm">Login</a>
                         <a href="{{ route('register') }}" class="btn btn-light btn-sm">Register</a>
                     @else
-                        <!-- Role switcher if user has multiple roles -->
-                        @if(auth()->user()->hasRole(['Candidate', 'Organization']))
+                        <!-- Role switcher if user has multiple roles and has setup both profiles -->
+                        @php
+                            $user = auth()->user();
+                            $hasCandidateRole = $user->hasRole('Candidate');
+                            $hasOrgRole = $user->hasRole('Organization');
+                            $hasCandidateProfile = $hasCandidateRole && $user->candidateProfile && $user->candidateProfile->exists();
+                            $hasOrgProfile = $hasOrgRole && $user->organizationProfile && $user->organizationProfile->exists();
+                            $showSwitcher = ($hasCandidateRole && $hasOrgRole && $hasCandidateProfile && $hasOrgProfile);
+                        @endphp
+                        
+                        @if($showSwitcher)
                             @include('partials.role-switcher')
                         @endif
                         
@@ -196,7 +204,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <h5>{{ config('app.name', 'Job Portal') }}</h5>
-                    <p class="text-muted">Connecting talent with opportunities</p>
+                    <p class="text-amber-100">Connecting talent with opportunities</p>
                 </div>
                 <div class="col-md-6">
                     <div class="footer-links text-md-end">
@@ -208,7 +216,7 @@
                             <a href="{{ route('register') }}">Register</a>
                         @endguest
                     </div>
-                    <p class="text-muted text-md-end mt-2">© {{ date('Y') }} {{ config('app.name', 'Job Portal') }}. All rights reserved.</p>
+                    <p class="text-amber-100 text-md-end mt-2">© {{ date('Y') }} {{ config('app.name', 'Job Portal') }}. All rights reserved.</p>
                 </div>
             </div>
         </div>

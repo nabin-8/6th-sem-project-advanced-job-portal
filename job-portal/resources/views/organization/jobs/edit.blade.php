@@ -89,12 +89,11 @@
                                 <div class="form-text">Providing a salary range increases application rates</div>
                             </div>
                         </div>
-                        
-                        <!-- Application Deadline -->
+                          <!-- Application Deadline -->
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="application_deadline" class="form-label">Application Deadline <span class="text-danger">*</span></label>
-                                <input type="date" class="form-control @error('application_deadline') is-invalid @enderror" id="application_deadline" name="application_deadline" value="{{ old('application_deadline', $job->application_deadline->format('Y-m-d')) }}" required>
+                                <input type="date" class="form-control @error('application_deadline') is-invalid @enderror" id="application_deadline" name="application_deadline" value="{{ old('application_deadline', $job->application_deadline ? $job->application_deadline->format('Y-m-d') : '') }}" required>
                                 @error('application_deadline')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
@@ -132,7 +131,7 @@
                         <div class="col-12">
                             <div class="form-group">
                                 <label for="requirements" class="form-label">Requirements <span class="text-danger">*</span></label>
-                                <textarea class="form-control @error('requirements') is-invalid @enderror" id="requirements" name="requirements" rows="6" required>{{ old('requirements', $job->requirements) }}</textarea>
+                                <textarea class="form-control @error('requirements') is-invalid @enderror" id="requirements" name="requirements" rows="6" required>{{ old('requirements', is_array($job->requirements) ? implode("\n", $job->requirements) : $job->requirements) }}</textarea>
                                 @error('requirements')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror

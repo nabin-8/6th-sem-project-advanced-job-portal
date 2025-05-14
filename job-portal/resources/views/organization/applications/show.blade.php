@@ -133,19 +133,18 @@
                         @method('PUT')
                         
                         <div class="mb-3">
-                            <label for="status" class="form-label">Update Status</label>
-                            <select class="form-select" id="status" name="status">
+                            <label for="status" class="form-label">Update Status</label>                            <select class="form-select" id="status" name="status">
                                 <option value="pending" {{ $application->status == 'pending' ? 'selected' : '' }}>Pending</option>
                                 <option value="reviewing" {{ $application->status == 'reviewing' ? 'selected' : '' }}>Reviewing</option>
                                 <option value="interview" {{ $application->status == 'interview' ? 'selected' : '' }}>Interview</option>
                                 <option value="offered" {{ $application->status == 'offered' ? 'selected' : '' }}>Offered</option>
                                 <option value="rejected" {{ $application->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                <option value="withdrawn" {{ $application->status == 'withdrawn' ? 'selected' : '' }}>Withdrawn</option>
                             </select>
                         </div>
-                        
-                        <div class="mb-3">
+                          <div class="mb-3">
                             <label for="notes" class="form-label">Internal Notes (not visible to candidate)</label>
-                            <textarea class="form-control" id="notes" name="notes" rows="3">{{ $application->notes }}</textarea>
+                            <textarea class="form-control" id="notes" name="notes" rows="3">{{ $application->admin_notes }}</textarea>
                         </div>
                         
                         <button type="submit" class="btn btn-primary">

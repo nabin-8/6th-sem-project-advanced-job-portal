@@ -5,11 +5,10 @@
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
         <h1 class="h2">Edit Job</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
-            <div class="btn-group me-2">
-                <a href="{{ route('jobs.show', $job) }}" class="btn btn-sm btn-outline-secondary">
+            <div class="btn-group me-2">                <a href="{{ route('admin.jobs.show', $job) }}" class="btn btn-sm btn-outline-secondary">
                     <i class="fas fa-eye me-1"></i> View Details
                 </a>
-                <a href="{{ route('jobs.index') }}" class="btn btn-sm btn-outline-secondary">
+                <a href="{{ route('admin.jobs.index') }}" class="btn btn-sm btn-outline-secondary">
                     <i class="fas fa-arrow-left me-1"></i> Back to List
                 </a>
             </div>
@@ -20,8 +19,7 @@
         <div class="card-header">
             <i class="fas fa-briefcase me-1"></i> Edit Job
         </div>
-        <div class="card-body">
-            <form action="{{ route('jobs.update', $job) }}" method="POST">
+        <div class="card-body">            <form action="{{ route('admin.jobs.update', $job) }}" method="POST">
                 @csrf
                 @method('PUT')
                 

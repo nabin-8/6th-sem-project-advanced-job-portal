@@ -141,8 +141,7 @@
                 <div class="card-header bg-danger text-white">
                     <i class="fas fa-exclamation-triangle me-1"></i> Danger Zone
                 </div>
-                <div class="card-body">
-                    <form action="{{ route('candidates.destroy', $candidate) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this candidate profile? This action cannot be undone.');">
+                <div class="card-body">                    <form action="{{ route('admin.candidates.destroy', $candidate) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this candidate profile? This action cannot be undone.');">
                         @csrf
                         @method('DELETE')
                         <div class="d-grid">

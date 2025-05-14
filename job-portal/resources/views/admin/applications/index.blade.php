@@ -12,7 +12,7 @@
                     <span><i class="fas fa-file-alt me-2"></i>All Applications</span>
 
                     <div>
-                        <form method="GET" action="{{ route('applications.index') }}" class="d-flex">
+                        <form method="GET" action="{{ route('admin.applications.index') }}" class="d-flex">
                             <select name="status" class="form-select form-select-sm me-2" onchange="this.form.submit()">
                                 <option value="">All Statuses</option>
                                 <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending
@@ -44,19 +44,18 @@
                             @foreach ($applications as $application)
                                 <tr>
                                     <td>{{ $application->id }}</td>
-                                    <td>
-                                        <a href="{{ route('jobs.show', $application->job) }}" class="text-decoration-none">
+                                    <td>                                        <a href="{{ route('admin.jobs.show', $application->job) }}" class="text-decoration-none">
                                             {{ $application->job->title }}
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="{{ route('candidates.show', $application->candidate) }}"
+                                        <a href="{{ route('admin.candidates.show', $application->candidate) }}"
                                             class="text-decoration-none">
                                             {{ $application->candidate->user->name }}
                                         </a>
                                     </td>
                                     <td>
-                                        <a href="{{ route('organizations.show', $application->job->organization) }}"
+                                        <a href="{{ route('admin.organizations.show', $application->job->organization) }}"
                                             class="text-decoration-none">
                                             {{ $application->job->organization->company_name }}
                                         </a>
@@ -72,12 +71,11 @@
                                     </td>
                                     <td>{{ $application->created_at->format('M d, Y') }}</td>
                                     <td>
-                                        <div class="btn-group" role="group">
-                                            <a href="{{ route('applications.show', $application) }}"
+                                        <div class="btn-group" role="group">                                            <a href="{{ route('admin.applications.show', $application) }}"
                                                 class="btn btn-sm btn-info">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <form action="{{ route('applications.destroy', $application) }}" method="POST"
+                                            <form action="{{ route('admin.applications.destroy', $application) }}" method="POST"
                                                 class="d-inline"
                                                 onsubmit="return confirm('Are you sure you want to delete this application?')">
                                                 @csrf

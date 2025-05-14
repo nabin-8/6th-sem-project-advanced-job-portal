@@ -76,13 +76,16 @@
                                             <span class="badge bg-secondary">Closed</span>
                                         @endif
                                     </td>
-                                    <td>{{ $job->created_at->format('M d, Y') }}</td>
-                                    <td>
-                                        {{ \Carbon\Carbon::parse($job->application_deadline)->format('M d, Y') }}
-                                        @if(\Carbon\Carbon::parse($job->application_deadline)->isPast())
-                                            <span class="badge bg-danger">Expired</span>
-                                        @elseif(\Carbon\Carbon::parse($job->application_deadline)->diffInDays() < 7)
-                                            <span class="badge bg-warning">Expires Soon</span>
+                                    <td>{{ $job->created_at->format('M d, Y') }}</td>                                    <td>
+                                        @if($job->application_deadline)
+                                            {{ \Carbon\Carbon::parse($job->application_deadline)->format('M d, Y') }}
+                                            @if(\Carbon\Carbon::parse($job->application_deadline)->isPast())
+                                                <span class="badge bg-danger">Expired</span>
+                                            @elseif(\Carbon\Carbon::parse($job->application_deadline)->diffInDays() < 7)
+                                                <span class="badge bg-warning">Expires Soon</span>
+                                            @endif
+                                        @else
+                                            <span class="text-muted">No deadline set</span>
                                         @endif
                                     </td>
                                     <td>

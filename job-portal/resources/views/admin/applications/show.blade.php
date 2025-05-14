@@ -6,13 +6,13 @@
         <h1 class="h2">Application Details</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group me-2">
-                <a href="{{ route('jobs.show', $application->job) }}" class="btn btn-sm btn-outline-primary">
+                <a href="{{ route('admin.jobs.show', $application->job) }}" class="btn btn-sm btn-outline-primary">
                     <i class="fas fa-briefcase me-1"></i> View Job
                 </a>
-                <a href="{{ route('candidates.show', $application->candidate) }}" class="btn btn-sm btn-outline-primary">
+                <a href="{{ route('admin.candidates.show', $application->candidate) }}" class="btn btn-sm btn-outline-primary">
                     <i class="fas fa-user-tie me-1"></i> View Candidate
                 </a>
-                <a href="{{ route('applications.index') }}" class="btn btn-sm btn-outline-secondary">
+                <a href="{{ route('admin.applications.index') }}" class="btn btn-sm btn-outline-secondary">
                     <i class="fas fa-arrow-left me-1"></i> Back to List
                 </a>
             </div>
@@ -29,10 +29,12 @@
                 <div class="card-body">
                     <div class="mb-4">
                         <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h3>{{ $application->job->title }}</h3>
-                            <span class="badge bg-{{ 
+                            <h3>{{ $application->job->title }}</h3>                            <span class="badge bg-{{ 
                                 $application->status === 'pending' ? 'warning text-dark' : 
-                                ($application->status === 'reviewed' ? 'success' : 'danger') 
+                                ($application->status === 'reviewing' ? 'info' : 
+                                ($application->status === 'interview' ? 'primary' : 
+                                ($application->status === 'offered' ? 'success' : 
+                                ($application->status === 'rejected' ? 'danger' : 'secondary')))) 
                             }}">
                                 {{ ucfirst($application->status) }}
                             </span>
@@ -62,18 +64,19 @@
                     </div>
                     @endif
 
-                    <hr>
-
-                    <div class="mb-4">
+                    <hr>                    <div class="mb-4">
                         <h5>Update Application Status</h5>
-                        <form action="{{ route('applications.updateStatus', $application) }}" method="POST" class="row g-2">
+                        <form action="{{ route('admin.applications.updateStatus', $application) }}" method="POST" class="row g-2">
                             @csrf
                             @method('PUT')
                             <div class="col-md-8">
                                 <select name="status" class="form-select @error('status') is-invalid @enderror">
                                     <option value="pending" {{ $application->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                    <option value="reviewed" {{ $application->status === 'reviewed' ? 'selected' : '' }}>Reviewed</option>
+                                    <option value="reviewing" {{ $application->status === 'reviewing' ? 'selected' : '' }}>Reviewing</option>
+                                    <option value="interview" {{ $application->status === 'interview' ? 'selected' : '' }}>Interview</option>
+                                    <option value="offered" {{ $application->status === 'offered' ? 'selected' : '' }}>Offered</option>
                                     <option value="rejected" {{ $application->status === 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                    <option value="withdrawn" {{ $application->status === 'withdrawn' ? 'selected' : '' }}>Withdrawn</option>
                                 </select>
                                 @error('status')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -85,9 +88,8 @@
                         </form>
                     </div>
 
-                    <div class="mb-3">
-                        <h5>Add Notes</h5>
-                        {{-- <form action="{{ route('applications.addNotes', $application) }}" method="POST">
+                    <div class="mb-3">                        <h5>Add Notes</h5>
+                        {{-- <form action="{{ route('admin.applications.addNotes', $application) }}" method="POST">
                             @csrf
                             @method('PUT')
                             <div class="mb-3">
@@ -123,14 +125,13 @@
                         <p>{{ $application->candidate->skills }}</p>
                     </div>
                     @endif
-                    
-                    @if($application->candidate->resume_path)
+                      @if($application->candidate->resume_path)
                     <a href="{{ Storage::url($application->candidate->resume_path) }}" target="_blank" class="btn btn-outline-primary w-100 mb-2">
                         <i class="fas fa-file-alt me-1"></i> View Resume
                     </a>
                     @endif
                     
-                    <a href="{{ route('candidates.show', $application->candidate) }}" class="btn btn-outline-secondary w-100">
+                    <a href="{{ route('admin.candidates.show', $application->candidate) }}" class="btn btn-outline-secondary w-100">
                         <i class="fas fa-user-tie me-1"></i> Full Candidate Profile
                     </a>
                 </div>
@@ -161,8 +162,7 @@
                             {{ ucfirst($application->job->status) }}
                         </span>
                     </div>
-                    
-                    <a href="{{ route('jobs.show', $application->job) }}" class="btn btn-outline-secondary w-100">
+                      <a href="{{ route('admin.jobs.show', $application->job) }}" class="btn btn-outline-secondary w-100">
                         <i class="fas fa-briefcase me-1"></i> Full Job Details
                     </a>
                 </div>
@@ -173,8 +173,7 @@
                 <div class="card-header bg-danger text-white">
                     <i class="fas fa-exclamation-triangle me-1"></i> Danger Zone
                 </div>
-                <div class="card-body">
-                    <form action="{{ route('applications.destroy', $application) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this application? This action cannot be undone.');">
+                <div class="card-body">                    <form action="{{ route('admin.applications.destroy', $application) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this application? This action cannot be undone.');">
                         @csrf
                         @method('DELETE')
                         <div class="d-grid">

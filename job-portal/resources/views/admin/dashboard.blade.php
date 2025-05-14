@@ -106,9 +106,8 @@
                         @endforeach
                     </tbody>
                 </table>
-            </div>
-            <div class="text-end">
-                <a href="{{ route('users.index') }}" class="btn btn-sm btn-primary">View all users</a>
+            </div>            <div class="text-end">
+                <a href="{{ route('admin.users.index') }}" class="btn btn-sm btn-primary">View all users</a>
             </div>
         </div>
     </div>
@@ -143,9 +142,8 @@
                         @endforeach
                     </tbody>
                 </table>
-            </div>
-            <div class="text-end">
-                <a href="{{ route('jobs.index') }}" class="btn btn-sm btn-primary">View all jobs</a>
+            </div>            <div class="text-end">
+                <a href="{{ route('admin.jobs.index') }}" class="btn btn-sm btn-primary">View all jobs</a>
             </div>
         </div>
     </div>
@@ -186,9 +184,8 @@
                         @endforeach
                     </tbody>
                 </table>
-            </div>
-            <div class="text-end">
-                <a href="{{ route('applications.index') }}" class="btn btn-sm btn-primary">View all applications</a>
+            </div>            <div class="text-end">
+                <a href="{{ route('admin.applications.index') }}" class="btn btn-sm btn-primary">View all applications</a>
             </div>
         </div>
     </div>

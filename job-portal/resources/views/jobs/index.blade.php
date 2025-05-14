@@ -140,10 +140,9 @@
                                     <p class="card-text">{{ Str::limit($job->description, 150) }}</p>
                                 </div>
                                 <div class="card-footer bg-white border-top-0">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="text-muted small">
+                                    <div class="d-flex justify-content-between align-items-center">                                        <span class="text-muted small">
                                             <i class="far fa-calendar-alt me-1"></i>
-                                            Deadline: {{ \Carbon\Carbon::parse($job->application_deadline)->format('M d, Y') }}
+                                            Deadline: {{ $job->application_deadline ? \Carbon\Carbon::parse($job->application_deadline)->format('M d, Y') : 'No deadline set' }}
                                         </span>
                                         <a href="{{ route('jobs.show', $job->id) }}" class="btn btn-outline-primary btn-sm">
                                             View Details

@@ -97,13 +97,16 @@
                         </div>
                     </div>
 
-                    <!-- Application Deadline -->
-                    <div class="alert alert-info d-flex align-items-center">
+                    <!-- Application Deadline -->                    <div class="alert alert-info d-flex align-items-center">
                         <i class="fas fa-hourglass-half me-3 fa-lg"></i>
                         <div>
                             <strong>Application Deadline:</strong> 
-                            {{ \Carbon\Carbon::parse($job->application_deadline)->format('F d, Y') }}
-                            ({{ \Carbon\Carbon::parse($job->application_deadline)->diffForHumans() }})
+                            @if($job->application_deadline)
+                                {{ \Carbon\Carbon::parse($job->application_deadline)->format('F d, Y') }}
+                                ({{ \Carbon\Carbon::parse($job->application_deadline)->diffForHumans() }})
+                            @else
+                                No deadline set
+                            @endif
                         </div>
                     </div>
                 </div>
