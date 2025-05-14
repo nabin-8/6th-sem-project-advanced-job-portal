@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('candidate_profiles', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id');
+            $table->string('headline')->nullable();
             $table->text('bio')->nullable();
             $table->string('phone')->nullable();
             $table->string('address')->nullable();
@@ -21,6 +22,7 @@ return new class extends Migration
             $table->json('education')->nullable();
             $table->json('experience')->nullable();
             $table->string('resume_path')->nullable();
+            $table->boolean('is_complete')->default(false);
             $table->timestamps();
         });
     }
