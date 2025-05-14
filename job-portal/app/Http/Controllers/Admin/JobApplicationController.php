@@ -36,14 +36,14 @@ class JobApplicationController extends Controller
     public function updateStatus(Request $request, JobApplication $application)
     {
         $request->validate([
-            'status' => 'required|in:pending,reviewed,rejected',
+            'status' => 'required|in:pending,reviewing,interview,offered,rejected,withdrawn',
         ]);
 
         $application->update([
             'status' => $request->status,
         ]);
 
-        return redirect()->route('applications.show', $application)
+        return redirect()->route('admin.applications.show', $application)
             ->with('success', 'Application status updated successfully.');
     }
 
@@ -54,7 +54,7 @@ class JobApplicationController extends Controller
     {
         $application->delete();
 
-        return redirect()->route('applications.index')
+        return redirect()->route('admin.applications.index')
             ->with('success', 'Application deleted successfully.');
     }
     

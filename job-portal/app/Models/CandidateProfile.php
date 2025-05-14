@@ -15,13 +15,18 @@ class CandidateProfile extends Model
      */
     protected $fillable = [
         'user_id',
+        'headline',
         'bio',
         'resume_path',
+        'resume',  // Add this for the new field name
         'skills',
         'education',
         'experience',
         'phone',
-        'address',
+        'address', // This is the actual column name in the database
+        'website',
+        'linkedin',
+        'is_complete',
     ];
 
     /**

@@ -28,27 +28,42 @@ class AuthController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
-        // dd($request->all());
 
-        $activeRole = $request->input('active_role', 'Candidate');
-        
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             
-            // Check if user has the selected role
-            if ($user->hasRole($activeRole)) {
-                // Set active role in user record
-                $user->active_role = $activeRole;
-                $user->save();
-                
-                $request->session()->regenerate();
-                return redirect()->intended('dashboard');
-            } else {
-                Auth::logout();
-                return back()->withErrors([
-                    'email' => 'You do not have the selected role.',
-                ])->withInput();
+            // Determine the appropriate role to activate
+            if ($user->hasRole(['Candidate', 'Organization'])) {
+                // If user has both roles, prioritize:
+                // 1. Last active role if it exists
+                // 2. Organization role if organization profile is complete
+                // 3. Candidate role if candidate profile is complete
+                // 4. Default to Candidate
+
+                if ($user->active_role && $user->hasRole($user->active_role)) {
+                    // Keep the last active role if valid
+                } elseif ($user->hasRole('Organization') && $user->organizationProfile && $user->organizationProfile->is_complete) {
+                    $user->active_role = 'Organization';
+                } elseif ($user->hasRole('Candidate') && $user->candidateProfile && $user->candidateProfile->is_complete) {
+                    $user->active_role = 'Candidate';
+                } elseif ($user->hasRole('Organization')) {
+                    $user->active_role = 'Organization';
+                } else {
+                    $user->active_role = 'Candidate';
+                }
+            } elseif ($user->hasRole('Candidate')) {
+                $user->active_role = 'Candidate';
+            } elseif ($user->hasRole('Organization')) {
+                $user->active_role = 'Organization';
             }
+            
+            $user->save();
+            
+            // Store in session for middleware
+            session(['active_role' => $user->active_role]);
+            
+            $request->session()->regenerate();
+            return redirect()->intended('dashboard');
         }
 
         return back()->withErrors([

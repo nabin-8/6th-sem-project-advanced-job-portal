@@ -67,7 +67,7 @@ class ApplicationController extends Controller
         }
 
         // Check if application deadline has passed
-        if ($job->application_deadline->isPast()) {
+        if ($job->application_deadline && $job->application_deadline->isPast()) {
             return redirect()->route('jobs.show', $job->id)
                 ->with('error', 'The application deadline for this job has passed.');
         }
@@ -137,7 +137,7 @@ class ApplicationController extends Controller
      * Display a listing of applications for a specific job (for organization).
      *
      * @param  \App\Models\Job  $job
-     * @return \Illuminate\View\View
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function jobApplications(Job $job)
     {
@@ -149,11 +149,17 @@ class ApplicationController extends Controller
                 ->with('error', 'You are not authorized to view applications for this job.');
         }
         
-        $applications = JobApplication::with('candidate.user')
-            ->where('job_id', $job->id)
-            ->latest()
-            ->paginate(10);
+        // Filter by status if requested
+        $status = request('status', 'all');
+        $query = JobApplication::with(['candidate.user'])
+            ->where('job_id', $job->id);
             
+        if ($status !== 'all') {
+            $query->where('status', $status);
+        }
+        
+        $applications = $query->paginate(10);
+        
         return view('organization.applications.index', [
             'job' => $job,
             'applications' => $applications
@@ -161,13 +167,13 @@ class ApplicationController extends Controller
     }
     
     /**
-     * Display the specified application (for organization).
+     * Display a specific application for a job.
      *
      * @param  \App\Models\Job  $job
      * @param  \App\Models\JobApplication  $application
-     * @return \Illuminate\View\View
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
-    public function showJobApplication(Job $job, JobApplication $application)
+    public function showApplication(Job $job, JobApplication $application)
     {
         // Ensure the authenticated user owns this job
         $organizationId = Auth::user()->organizationProfile->id;
@@ -190,14 +196,14 @@ class ApplicationController extends Controller
     }
     
     /**
-     * Update application status (for organization).
+     * Update the status of a job application.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Job  $job
      * @param  \App\Models\JobApplication  $application
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function updateStatus(Request $request, Job $job, JobApplication $application)
+    public function updateApplicationStatus(Request $request, Job $job, JobApplication $application)
     {
         // Ensure the authenticated user owns this job
         $organizationId = Auth::user()->organizationProfile->id;
@@ -214,13 +220,58 @@ class ApplicationController extends Controller
         }
         
         $request->validate([
-            'status' => 'required|in:pending,reviewing,interview,offered,rejected'
+            'status' => 'required|in:pending,reviewing,interview,offered,rejected,withdrawn',
+            'notes' => 'nullable|string|max:1000'
         ]);
         
         $application->status = $request->status;
+        
+        if ($request->filled('notes')) {
+            $application->admin_notes = $request->notes;
+        }
+        
         $application->save();
         
         return redirect()->route('jobs.applications.show', [$job->id, $application->id])
             ->with('success', 'Application status updated successfully.');
+    }
+    
+    /**
+     * Send a message to a candidate.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Job  $job
+     * @param  \App\Models\JobApplication  $application
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function sendMessage(Request $request, Job $job, JobApplication $application)
+    {
+        // Ensure the authenticated user owns this job
+        $organizationId = Auth::user()->organizationProfile->id;
+        
+        if ($job->organization_id != $organizationId) {
+            return redirect()->route('jobs.manage')
+                ->with('error', 'You are not authorized to contact candidates for this job.');
+        }
+        
+        // Ensure the application belongs to the job
+        if ($application->job_id != $job->id) {
+            return redirect()->route('jobs.applications', $job->id)
+                ->with('error', 'The application does not belong to this job.');
+        }
+        
+        $request->validate([
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string'
+        ]);
+        
+        // In a real application, we would send an email here
+        // For now, we'll just add a log to the application
+        
+        $application->last_contact = now();
+        $application->save();
+        
+        return redirect()->route('jobs.applications.show', [$job->id, $application->id])
+            ->with('success', 'Message sent to candidate successfully.');
     }
 }

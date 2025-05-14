@@ -53,7 +53,7 @@ class OrganizationController extends Controller
 
         $organization->update($request->all());
 
-        return redirect()->route('organizations.show', $organization)
+        return redirect()->route('admin.organizations.show', $organization)
             ->with('success', 'Organization updated successfully.');
     }
 

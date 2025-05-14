@@ -16,6 +16,7 @@ class Job extends Model
     protected $table = 'vacancies';
     protected $casts = [
         'requirements' => 'array',
+        'application_deadline' => 'datetime',
     ];
     
     /**

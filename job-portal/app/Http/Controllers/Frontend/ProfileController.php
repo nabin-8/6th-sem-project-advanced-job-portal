@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Models\CandidateProfile;
@@ -15,24 +16,24 @@ class ProfileController extends Controller
     /**
      * Show the user profile edit form based on active role.
      *
-     * @return \Illuminate\View\View
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function edit()
     {
         $user = Auth::user();
         $activeRole = $user->active_role;
         
-        if ($activeRole === 'Candidate') {
+        if ($activeRole === "Candidate") {
             // Ensure candidate profile exists
-            $profile = $user->candidateProfile ?? new CandidateProfile(['user_id' => $user->id]);
-            return view('profile.candidate.edit', ['profile' => $profile]);
-        } elseif ($activeRole === 'Organization') {
+            $profile = $user->candidateProfile ?? new CandidateProfile(["user_id" => $user->id]);
+            return view("profile.candidate.edit", ["profile" => $profile]);
+        } elseif ($activeRole === "Organization") {
             // Ensure organization profile exists
-            $profile = $user->organizationProfile ?? new OrganizationProfile(['user_id' => $user->id]);
-            return view('profile.organization.edit', ['profile' => $profile]);
+            $profile = $user->organizationProfile ?? new OrganizationProfile(["user_id" => $user->id]);
+            return view("profile.organization.edit", ["profile" => $profile]);
         } else {
-            return redirect()->route('dashboard')
-                ->with('error', 'Please select a role before editing your profile.');
+            return redirect()->route("dashboard")
+                ->with("error", "Please select a role before editing your profile.");
         }
     }
 
@@ -48,60 +49,92 @@ class ProfileController extends Controller
         
         // Validate request data
         $validated = $request->validate([
-            'headline' => 'nullable|string|max:100',
-            'bio' => 'nullable|string|max:1000',
-            'location' => 'nullable|string|max:100',
-            'phone' => 'nullable|string|max:20',
-            'skills' => 'nullable|string|max:500',
-            'experience' => 'nullable|string|max:2000',
-            'education' => 'nullable|string|max:2000',
-            'website' => 'nullable|url|max:255',
-            'linkedin' => 'nullable|url|max:255',
-            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-            'resume' => 'nullable|file|mimes:pdf,doc,docx|max:5120',
+            "headline" => "nullable|string|max:100",
+            "bio" => "nullable|string|max:1000",
+            "location" => "nullable|string|max:100",
+            "phone" => "nullable|string|max:20",
+            "skills" => "nullable|string|max:500",
+            "experience" => "nullable|string|max:2000",
+            "education" => "nullable|string|max:2000",
+            "website" => "nullable|url|max:255",
+            "linkedin" => "nullable|url|max:255",
+            "profile_photo" => "nullable|image|mimes:jpeg,png,jpg|max:2048",
+            "resume" => "nullable|file|mimes:pdf,doc,docx|max:5120",
         ]);
         
         // Get or create candidate profile
-        $profile = $user->candidateProfile ?? new CandidateProfile(['user_id' => $user->id]);
+        $profile = $user->candidateProfile ?? new CandidateProfile(["user_id" => $user->id]);
         
         // Update profile fields
-        $profile->headline = $validated['headline'] ?? $profile->headline;
-        $profile->bio = $validated['bio'] ?? $profile->bio;
-        $profile->location = $validated['location'] ?? $profile->location;
-        $profile->phone = $validated['phone'] ?? $profile->phone;
-        $profile->skills = $validated['skills'] ?? $profile->skills;
-        $profile->experience = $validated['experience'] ?? $profile->experience;
-        $profile->education = $validated['education'] ?? $profile->education;
-        $profile->website = $validated['website'] ?? $profile->website;
-        $profile->linkedin = $validated['linkedin'] ?? $profile->linkedin;
+        $profile->headline = $validated["headline"] ?? $profile->headline;
+        $profile->bio = $validated["bio"] ?? $profile->bio;
+        
+        // Handle location field (address in the database until migration runs)
+        if (isset($validated["location"])) {
+            if (Schema::hasColumn("candidate_profiles", "location")) {
+                $profile->location = $validated["location"];
+            } else {
+                $profile->address = $validated["location"]; 
+            }
+        }
+        
+        $profile->phone = $validated["phone"] ?? $profile->phone;
+        $profile->skills = $validated["skills"] ?? $profile->skills;
+        $profile->experience = $validated["experience"] ?? $profile->experience;
+        $profile->education = $validated["education"] ?? $profile->education;
+        $profile->website = $validated["website"] ?? $profile->website ?? null;
+        $profile->linkedin = $validated["linkedin"] ?? $profile->linkedin ?? null;
         
         // Handle profile photo upload
-        if ($request->hasFile('profile_photo')) {
+        if ($request->hasFile("profile_photo")) {
             // Delete old photo if exists
             if ($user->profile_photo) {
                 Storage::delete($user->profile_photo);
             }
             
-            $photo = $request->file('profile_photo');
-            $path = $photo->store('profile-photos', 'public');
+            $photo = $request->file("profile_photo");
+            $path = $photo->store("profile-photos", "public");
             $user->profile_photo = $path;
             $user->save();
         }
         
         // Handle resume upload
-        if ($request->hasFile('resume')) {
+        if ($request->hasFile("resume")) {
             // Delete old resume if exists
             if ($profile->resume) {
                 Storage::delete($profile->resume);
+            } else if ($profile->resume_path) {
+                Storage::delete($profile->resume_path);
             }
             
-            $resume = $request->file('resume');
-            $path = $resume->store('resumes', 'public');
+            $resume = $request->file("resume");
+            $path = $resume->store("resumes", "public");
+            
+            // Store path in both fields for backward compatibility
             $profile->resume = $path;
+            $profile->resume_path = $path;
         }
         
         // Check if profile is complete
-        $requiredFields = ['headline', 'bio', 'location', 'phone', 'skills', 'resume'];
+        $requiredFields = ["headline", "bio", "phone", "skills"];
+        
+        // Add the correct location field to required fields based on which column exists
+        if (Schema::hasColumn("candidate_profiles", "location")) {
+            $requiredFields[] = "location";
+        } else {
+            $requiredFields[] = "address";
+        }
+        
+        // Add the correct resume field to required fields
+        if ($profile->resume || $request->hasFile("resume")) {
+            // Resume is satisfied
+        } else if ($profile->resume_path) {
+            // Old field is filled
+        } else {
+            // Neither field has a value, profile is incomplete
+            $requiredFields[] = "resume";
+        }
+        
         $isComplete = true;
         
         foreach ($requiredFields as $field) {
@@ -114,7 +147,7 @@ class ProfileController extends Controller
         $profile->is_complete = $isComplete;
         $profile->save();
         
-        return redirect()->back()->with('success', 'Your profile has been updated successfully.');
+        return redirect()->back()->with("success", "Your profile has been updated successfully.");
     }
 
     /**
@@ -129,46 +162,46 @@ class ProfileController extends Controller
         
         // Validate request data
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'industry' => 'nullable|string|max:100',
-            'description' => 'nullable|string|max:2000',
-            'location' => 'nullable|string|max:100',
-            'website' => 'nullable|url|max:255',
-            'email' => 'nullable|email|max:255',
-            'phone' => 'nullable|string|max:20',
-            'founded_year' => 'nullable|integer|min:1900|max:' . date('Y'),
-            'company_size' => 'nullable|string|max:50',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            "name" => "required|string|max:255",
+            "industry" => "nullable|string|max:100",
+            "description" => "nullable|string|max:2000",
+            "location" => "nullable|string|max:100",
+            "website" => "nullable|url|max:255",
+            "email" => "nullable|email|max:255",
+            "phone" => "nullable|string|max:20",
+            "founded_year" => "nullable|integer|min:1900|max:" . date("Y"),
+            "company_size" => "nullable|string|max:50",
+            "logo" => "nullable|image|mimes:jpeg,png,jpg|max:2048",
         ]);
         
         // Get or create organization profile
-        $profile = $user->organizationProfile ?? new OrganizationProfile(['user_id' => $user->id]);
+        $profile = $user->organizationProfile ?? new OrganizationProfile(["user_id" => $user->id]);
         
         // Update profile fields
-        $profile->name = $validated['name'];
-        $profile->industry = $validated['industry'] ?? $profile->industry;
-        $profile->description = $validated['description'] ?? $profile->description;
-        $profile->location = $validated['location'] ?? $profile->location;
-        $profile->website = $validated['website'] ?? $profile->website;
-        $profile->email = $validated['email'] ?? $profile->email;
-        $profile->phone = $validated['phone'] ?? $profile->phone;
-        $profile->founded_year = $validated['founded_year'] ?? $profile->founded_year;
-        $profile->company_size = $validated['company_size'] ?? $profile->company_size;
+        $profile->name = $validated["name"];
+        $profile->industry = $validated["industry"] ?? $profile->industry;
+        $profile->description = $validated["description"] ?? $profile->description;
+        $profile->location = $validated["location"] ?? $profile->location;
+        $profile->website = $validated["website"] ?? $profile->website;
+        $profile->email = $validated["email"] ?? $profile->email;
+        $profile->phone = $validated["phone"] ?? $profile->phone;
+        $profile->founded_year = $validated["founded_year"] ?? $profile->founded_year;
+        $profile->company_size = $validated["company_size"] ?? $profile->company_size;
         
         // Handle logo upload
-        if ($request->hasFile('logo')) {
+        if ($request->hasFile("logo")) {
             // Delete old logo if exists
             if ($profile->logo) {
                 Storage::delete($profile->logo);
             }
             
-            $logo = $request->file('logo');
-            $path = $logo->store('organization-logos', 'public');
+            $logo = $request->file("logo");
+            $path = $logo->store("organization-logos", "public");
             $profile->logo = $path;
         }
         
         // Check if profile is complete
-        $requiredFields = ['name', 'industry', 'description', 'location'];
+        $requiredFields = ["name", "industry", "description", "location"];
         $isComplete = true;
         
         foreach ($requiredFields as $field) {
@@ -181,7 +214,7 @@ class ProfileController extends Controller
         $profile->is_complete = $isComplete;
         $profile->save();
         
-        return redirect()->back()->with('success', 'Your organization profile has been updated successfully.');
+        return redirect()->back()->with("success", "Your organization profile has been updated successfully.");
     }
 
     /**
@@ -192,8 +225,8 @@ class ProfileController extends Controller
      */
     public function viewCandidateProfile($id)
     {
-        $profile = CandidateProfile::with('user')->findOrFail($id);
-        return view('profile.candidate.view', ['profile' => $profile]);
+        $profile = CandidateProfile::with("user")->findOrFail($id);
+        return view("profile.candidate.view", ["profile" => $profile]);
     }
 
     /**
@@ -204,47 +237,44 @@ class ProfileController extends Controller
      */
     public function viewOrganizationProfile($id)
     {
-        $profile = OrganizationProfile::with(['user', 'jobs' => function($query) {
-            $query->where('status', 'open')->orderBy('created_at', 'desc')->take(5);
-        }])->findOrFail($id);
-        
-        return view('profile.organization.view', ['profile' => $profile]);
+        $profile = OrganizationProfile::with("user")->findOrFail($id);
+        return view("profile.organization.view", ["profile" => $profile]);
     }
-
+    
     /**
-     * Display the user's profile based on active role.
+     * Display the current user's profile.
      *
-     * @return \Illuminate\View\View
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function show()
     {
         $user = Auth::user();
         $activeRole = $user->active_role;
         
-        if ($activeRole === 'Candidate') {
+        if ($activeRole === "Candidate") {
             // View candidate profile
             $profile = $user->candidateProfile;
-            return view('profile.candidate.show', [
-                'profile' => $profile,
-                'user' => $user
+            return view("profile.candidate.show", [
+                "profile" => $profile,
+                "user" => $user
             ]);
-        } elseif ($activeRole === 'Organization') {
+        } elseif ($activeRole === "Organization") {
             // View organization profile
             $profile = $user->organizationProfile;
             $recentJobs = $profile->jobs()
-                                ->where('status', 'open')
-                                ->orderBy('created_at', 'desc')
+                                ->where("status", "open")
+                                ->orderBy("created_at", "desc")
                                 ->take(5)
                                 ->get();
             
-            return view('profile.organization.show', [
-                'profile' => $profile,
-                'user' => $user,
-                'recentJobs' => $recentJobs
+            return view("profile.organization.show", [
+                "profile" => $profile,
+                "user" => $user,
+                "recentJobs" => $recentJobs
             ]);
         } else {
-            return redirect()->route('dashboard')
-                ->with('error', 'Please select a valid role to view your profile.');
+            return redirect()->route("dashboard")
+                ->with("error", "Please select a valid role to view your profile.");
         }
     }
 }
