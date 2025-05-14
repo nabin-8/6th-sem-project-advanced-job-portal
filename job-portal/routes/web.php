@@ -80,6 +80,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/applications', [ApplicationController::class, 'index'])->name('applications.index');
         Route::get('/applications/{application}', [ApplicationController::class, 'show'])->name('applications.show');
         Route::post('/jobs/{job}/apply', [ApplicationController::class, 'apply'])->name('jobs.apply');
+        Route::post('/applications/{application}/withdraw', [ApplicationController::class, 'withdraw'])->name('applications.withdraw');
     });
     
     // Organization Routes
@@ -93,6 +94,9 @@ Route::middleware('auth')->group(function () {
         Route::delete('/jobs/{job}', [JobsController::class, 'destroy'])->name('jobs.destroy');
         Route::put('/jobs/{job}/toggle-status', [JobsController::class, 'toggleStatus'])->name('jobs.toggle-status');
         Route::get('/applications/{job}', [ApplicationController::class, 'jobApplications'])->name('jobs.applications');
+        Route::get('/applications/{job}/{application}', [ApplicationController::class, 'showApplication'])->name('jobs.applications.show');
+        Route::put('/applications/{job}/{application}/status', [ApplicationController::class, 'updateApplicationStatus'])->name('jobs.applications.update-status');
+        Route::post('/applications/{job}/{application}/message', [ApplicationController::class, 'sendMessage'])->name('jobs.applications.send-message');
     });
     
     // Profile Routes (available to both roles)
