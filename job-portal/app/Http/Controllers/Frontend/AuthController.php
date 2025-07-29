@@ -92,6 +92,13 @@ class AuthController extends Controller
             'terms' => 'required',
         ]);
 
+        // 'password' => [
+        //         'required',
+        //         'string',
+        //         'min:8',
+        //         'confirmed',
+        //         'regex:/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/',
+        // ]
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }

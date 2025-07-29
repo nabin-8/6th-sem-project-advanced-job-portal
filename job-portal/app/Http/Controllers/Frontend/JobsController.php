@@ -40,6 +40,10 @@ class JobsController extends Controller
             $query->where('employment_type', $request->employment_type);
         }
         
+        if ($request->has('category_id') && $request->category_id) {
+            $query->where('category_id', $request->category_id);
+        }
+        
         if ($request->has('salary_min') && $request->salary_min) {
             $query->where('salary_min', '>=', $request->salary_min);
         }
@@ -59,26 +63,31 @@ class JobsController extends Controller
             $query->latest(); // Default sorting
         }
         
-        $jobs = $query->with('organization')
+        $jobs = $query->with(['organization', 'category'])
                       ->paginate(10)
                       ->withQueryString(); // Use withQueryString to preserve pagination
                       
-        $employmentTypes = ['full-time', 'part-time', 'contract', 'internship', 'remote'];
+        $employmentTypes = ['full_time', 'part_time', 'contract', 'internship', 'remote'];
         
         // Create a clean array of filters for the view
         $filters = [
             'keyword' => $request->input('keyword', ''),
             'location' => $request->input('location', ''),
             'employment_type' => $request->input('employment_type', ''),
+            'category_id' => $request->input('category_id', ''),
             'salary_min' => $request->input('salary_min', ''),
             'salary_max' => $request->input('salary_max', ''),
             'sort' => $request->input('sort', 'newest')
         ];
         
+        // Get job categories for filtering
+        $categories = \App\Models\JobCategory::orderBy('name')->get();
+        
         return view('jobs.index', [
             'jobs' => $jobs,
             'employmentTypes' => $employmentTypes,
             'filters' => $filters,
+            'categories' => $categories,
         ]);
     }
     
@@ -105,6 +114,7 @@ class JobsController extends Controller
                         ->latest()
                         ->take(3)
                         ->get();
+        // dd($job, $hasApplied, $relatedJobs);
         
         return view('jobs.show', [
             'job' => $job,
@@ -122,9 +132,10 @@ class JobsController extends Controller
     {
         $organizationId = Auth::user()->organizationProfile->id;
         $jobs = Job::where('organization_id', $organizationId)
+                  ->withCount('applications')
                   ->latest()
                   ->paginate(10);
-                  
+   
         return view('organization.jobs.manage', [
             'jobs' => $jobs,
         ]);
@@ -145,9 +156,11 @@ class JobsController extends Controller
         }
         
         $employmentTypes = ['full-time', 'part-time', 'contract', 'internship', 'remote'];
+        $categories = \App\Models\JobCategory::orderBy('name')->get();
         
         return view('organization.jobs.create', [
             'employmentTypes' => $employmentTypes,
+            'categories' => $categories,
         ]);
     }
     
@@ -168,6 +181,7 @@ class JobsController extends Controller
             'salary_min' => 'nullable|numeric|min:0',
             'salary_max' => 'nullable|numeric|min:0|gte:salary_min',
             'application_deadline' => 'required|date|after:today',
+            'category_id' => 'required|exists:job_categories,id',
         ]);
         
         $job = new Job();
@@ -182,6 +196,7 @@ class JobsController extends Controller
         $job->is_featured = false;
         $job->status = 'open';
         $job->organization_id = Auth::user()->organizationProfile->id;
+        $job->category_id = $request->category_id;
         $job->save();
         
         return redirect()->route('jobs.manage')
@@ -204,10 +219,12 @@ class JobsController extends Controller
         }
         
         $employmentTypes = ['full-time', 'part-time', 'contract', 'internship', 'remote'];
+        $categories = \App\Models\JobCategory::orderBy('name')->get();
         
         return view('organization.jobs.edit', [
             'job' => $job,
             'employmentTypes' => $employmentTypes,
+            'categories' => $categories,
         ]);
     }
     
@@ -236,6 +253,7 @@ class JobsController extends Controller
             'salary_min' => 'nullable|numeric|min:0',
             'salary_max' => 'nullable|numeric|min:0|gte:salary_min',
             'application_deadline' => 'required|date',
+            'category_id' => 'required|exists:job_categories,id',
         ]);
         
         $job->title = $request->title;
@@ -246,6 +264,7 @@ class JobsController extends Controller
         $job->salary_min = $request->salary_min;
         $job->salary_max = $request->salary_max;
         $job->application_deadline = $request->application_deadline;
+        $job->category_id = $request->category_id;
         $job->save();
         
         return redirect()->route('jobs.manage')
