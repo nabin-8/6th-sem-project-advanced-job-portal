@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\CandidateController;
 use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Admin\JobController as AdminJobController;
 use App\Http\Controllers\Admin\JobApplicationController as AdminApplicationController;
+use App\Http\Controllers\Admin\JobCategoryController;
+use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Auth\AdminAuthController;
 use App\Http\Controllers\Frontend\HomeController;
 use App\Http\Controllers\Frontend\JobsController;
@@ -49,14 +51,40 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Job Applications Management
         Route::resource('applications', AdminApplicationController::class);
         Route::put('applications/{application}/status', [AdminApplicationController::class, 'updateStatus'])->name('applications.updateStatus');
+        
+        // Job Categories Management
+        Route::resource('categories', JobCategoryController::class);
+        
+        // FAQs Management
+        Route::resource('faqs', FaqController::class);
+        Route::put('faqs/{faq}/toggle-published', [FaqController::class, 'togglePublished'])->name('faqs.toggle-published');
+        Route::post('faqs/reorder', [FaqController::class, 'reorder'])->name('faqs.reorder');
     });
 });
 
-// Public Routes
+// Original Public Routes - Keeping for backward compatibility
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/jobs', [JobsController::class, 'index'])->name('jobs.index');
 Route::get('/jobs/{job}', [JobsController::class, 'show'])->name('jobs.show');
+// Note: Keep organization profile route at the end to avoid conflicts with /organization/dashboard
+Route::get('/organization/{id}', [ProfileController::class, 'viewOrganizationProfile'])->name('organization.profile')->where('id', '[0-9]+');
+
+// New Public Frontend Routes
+use App\Http\Controllers\Public\PublicController;
+
+Route::group(['prefix' => 'new', 'as' => 'public.'], function () {
+    Route::get('/', [PublicController::class, 'home'])->name('home');
+    
+    // Jobs Routes
+    Route::get('/jobs', [PublicController::class, 'jobsIndex'])->name('jobs.index');
+    Route::get('/jobs/{slug}', [PublicController::class, 'jobShow'])->name('jobs.show');
+    Route::get('/jobs/{slug}/apply', [PublicController::class, 'jobApply'])->name('jobs.apply');
+    
+    // Organization Routes
+    Route::get('/organizations', [PublicController::class, 'organizationsIndex'])->name('organizations.index');
+    Route::get('/organizations/{slug}', [PublicController::class, 'organizationShow'])->name('organizations.show');
+});
 
 // Frontend Authentication Routes
 Route::middleware('guest')->group(function () {
@@ -108,5 +136,4 @@ Route::middleware('auth')->group(function () {
     
     // Public profile routes
     Route::get('/candidate/{id}', [ProfileController::class, 'viewCandidateProfile'])->name('candidate.profile');
-    Route::get('/organization/{id}', [ProfileController::class, 'viewOrganizationProfile'])->name('organization.profile');
 });
