@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Models\CandidateProfile;
 use App\Models\OrganizationProfile;
+use App\Models\User;
 
 class ProfileController extends Controller
 {
@@ -89,26 +90,28 @@ class ProfileController extends Controller
         if ($request->hasFile("profile_photo")) {
             // Delete old photo if exists
             if ($user->profile_photo) {
-                Storage::delete($user->profile_photo);
+                Storage::disk('uploads')->delete($user->profile_photo);
             }
             
             $photo = $request->file("profile_photo");
-            $path = $photo->store("profile-photos", "public");
-            $user->profile_photo = $path;
-            $user->save();
+            $path = $photo->store("profile-photos", "uploads");
+            if ($user && method_exists($user, 'save')) {
+                $user->profile_photo = $path;
+                $user->save();
+            }
         }
         
         // Handle resume upload
         if ($request->hasFile("resume")) {
             // Delete old resume if exists
             if ($profile->resume) {
-                Storage::delete($profile->resume);
+                Storage::disk('uploads')->delete($profile->resume);
             } else if ($profile->resume_path) {
-                Storage::delete($profile->resume_path);
+                Storage::disk('uploads')->delete($profile->resume_path);
             }
             
             $resume = $request->file("resume");
-            $path = $resume->store("resumes", "public");
+            $path = $resume->store("resumes", "uploads");
             
             // Store path in both fields for backward compatibility
             $profile->resume = $path;
@@ -172,6 +175,12 @@ class ProfileController extends Controller
             "founded_year" => "nullable|integer|min:1900|max:" . date("Y"),
             "company_size" => "nullable|string|max:50",
             "logo" => "nullable|image|mimes:jpeg,png,jpg|max:2048",
+            "mission" => "nullable|string|max:2000",
+            "benefits" => "nullable|string|max:2000",
+            "linkedin" => "nullable|url|max:255",
+            "twitter" => "nullable|url|max:255",
+            "banner_image" => "nullable|image|mimes:jpeg,png,jpg|max:5120",
+            "company_brochure" => "nullable|file|mimes:pdf|max:5120",
         ]);
         
         // Get or create organization profile
@@ -187,17 +196,45 @@ class ProfileController extends Controller
         $profile->phone = $validated["phone"] ?? $profile->phone;
         $profile->founded_year = $validated["founded_year"] ?? $profile->founded_year;
         $profile->company_size = $validated["company_size"] ?? $profile->company_size;
+        $profile->mission = $validated["mission"] ?? $profile->mission;
+        $profile->benefits = $validated["benefits"] ?? $profile->benefits;
+        $profile->linkedin = $validated["linkedin"] ?? $profile->linkedin;
+        $profile->twitter = $validated["twitter"] ?? $profile->twitter;
         
         // Handle logo upload
         if ($request->hasFile("logo")) {
             // Delete old logo if exists
             if ($profile->logo) {
-                Storage::delete($profile->logo);
+                Storage::disk('uploads')->delete($profile->logo);
             }
             
             $logo = $request->file("logo");
-            $path = $logo->store("organization-logos", "public");
+            $path = $logo->store("organization-logos", "uploads");
             $profile->logo = $path;
+        }
+        
+        // Handle banner image upload
+        if ($request->hasFile("banner_image")) {
+            // Delete old banner image if exists
+            if ($profile->banner_image) {
+                Storage::disk('uploads')->delete($profile->banner_image);
+            }
+            
+            $bannerImage = $request->file("banner_image");
+            $path = $bannerImage->store("organization-banners", "uploads");
+            $profile->banner_image = $path;
+        }
+        
+        // Handle company brochure upload
+        if ($request->hasFile("company_brochure")) {
+            // Delete old company brochure if exists
+            if ($profile->company_brochure) {
+                Storage::disk('uploads')->delete($profile->company_brochure);
+            }
+            
+            $brochure = $request->file("company_brochure");
+            $path = $brochure->store("organization-documents", "uploads");
+            $profile->company_brochure = $path;
         }
         
         // Check if profile is complete
@@ -237,8 +274,28 @@ class ProfileController extends Controller
      */
     public function viewOrganizationProfile($id)
     {
+        // Find organization profile with user relationship
         $profile = OrganizationProfile::with("user")->findOrFail($id);
-        return view("profile.organization.view", ["profile" => $profile]);
+        
+        // Count active jobs
+        $activeJobsCount = $profile->jobs()->where('status', 'open')->count();
+        
+        // Count featured jobs
+        $featuredJobsCount = $profile->jobs()->where('status', 'open')->where('is_featured', true)->count();
+        
+        // Get recent jobs for display
+        $jobs = $profile->jobs()
+            ->where('status', 'open')
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+        
+        return view("profile.organization.view", [
+            "profile" => $profile,
+            "jobs" => $jobs,
+            "activeJobsCount" => $activeJobsCount,
+            "featuredJobsCount" => $featuredJobsCount
+        ]);
     }
     
     /**

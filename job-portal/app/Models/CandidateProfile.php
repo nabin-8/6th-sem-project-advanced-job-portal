@@ -44,4 +44,21 @@ class CandidateProfile extends Model
     {
         return $this->hasMany(JobApplication::class, 'candidate_id');
     }
+    
+    /**
+     * Get the required fields for profile completion.
+     * 
+     * @return array
+     */
+    public static function getRequiredFields(): array
+    {
+        return [
+            'headline',
+            'bio',
+            'location', // Using 'location' instead of 'address' for consistency with UI
+            'phone',
+            'skills',
+            'resume' // Using the new field name
+        ];
+    }
 }

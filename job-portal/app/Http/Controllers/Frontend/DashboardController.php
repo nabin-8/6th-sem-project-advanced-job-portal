@@ -90,6 +90,7 @@ class DashboardController extends Controller
     public function organizationDashboard()
     {
         $user = Auth::user();
+        // dd($user);
         $organizationProfile = $user->organizationProfile;
         
         // Calculate profile completion percentage
@@ -113,8 +114,9 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
         
-        // Get recent jobs posted
+        // Get recent jobs posted with applications count
         $recentJobs = Job::where('organization_id', $organizationProfile->id)
+            ->withCount('applications')
             ->latest()
             ->take(5)
             ->get();
@@ -139,26 +141,32 @@ class DashboardController extends Controller
      */
     private function calculateCandidateProfileCompletion(CandidateProfile $profile)
     {
-        $fields = [
-            'headline', 
-            'summary', 
-            'skills', 
-            'experience',
-            'education',
-            'phone',
-            'location',
-            'resume'
-        ];
+        $fields = CandidateProfile::getRequiredFields();
         
         $filledFields = 0;
         
         foreach ($fields as $field) {
-            if (!empty($profile->$field)) {
+            // For location field, check address column which is the actual db column
+            if ($field === 'location' && !empty($profile->address)) {
+                $filledFields++;
+            }
+            // For resume, check either resume or resume_path
+            elseif ($field === 'resume' && (!empty($profile->resume) || !empty($profile->resume_path))) {
+                $filledFields++;
+            }
+            elseif (!empty($profile->$field)) {
                 $filledFields++;
             }
         }
         
-        return intval(($filledFields / count($fields)) * 100);
+        // Set is_complete flag based on percentage
+        $percentage = intval(($filledFields / count($fields)) * 100);
+        if ($percentage >= 80 && $profile->is_complete == false) {
+            $profile->is_complete = true;
+            $profile->save();
+        }
+        
+        return $percentage;
     }
 
     /**
@@ -169,16 +177,7 @@ class DashboardController extends Controller
      */
     private function calculateOrganizationProfileCompletion(OrganizationProfile $profile)
     {
-        $fields = [
-            'name', 
-            'description', 
-            'industry', 
-            'website',
-            'location',
-            'employees_count',
-            'phone',
-            'logo'
-        ];
+        $fields = OrganizationProfile::getRequiredFields();
         
         $filledFields = 0;
         
@@ -188,7 +187,14 @@ class DashboardController extends Controller
             }
         }
         
-        return intval(($filledFields / count($fields)) * 100);
+        // Set is_complete flag based on percentage
+        $percentage = intval(($filledFields / count($fields)) * 100);
+        if ($percentage >= 80 && $profile->is_complete == false) {
+            $profile->is_complete = true;
+            $profile->save();
+        }
+        
+        return $percentage;
     }
 
     /**
@@ -199,13 +205,28 @@ class DashboardController extends Controller
      */
     private function getRecommendedJobs(CandidateProfile $candidateProfile)
     {
-        // Get candidate skills (assuming skills are stored as a comma-separated string)
-        $skills = $candidateProfile->skills ? explode(',', $candidateProfile->skills) : [];
+        // First check if profile is complete - only recommend jobs for complete profiles
+        if (!$candidateProfile->is_complete) {
+            return collect([]); // Return empty collection if profile is not complete
+        }
         
         // Base query for open jobs
         $jobsQuery = Job::where('status', 'open');
         
-        // If candidate has skills, try to match them with job requirements
+        // Handle skills parsing from different formats
+        $skills = [];
+        if (!empty($candidateProfile->skills)) {
+            // Try to decode as JSON first (some records may store skills as JSON)
+            $jsonSkills = json_decode($candidateProfile->skills);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($jsonSkills)) {
+                $skills = $jsonSkills;
+            } else {
+                // Fall back to comma-separated string
+                $skills = explode(',', $candidateProfile->skills);
+            }
+        }
+        
+        // If candidate has skills, match them with job requirements
         if (count($skills) > 0) {
             $jobsQuery->where(function($query) use ($skills) {
                 foreach ($skills as $skill) {
@@ -219,6 +240,15 @@ class DashboardController extends Controller
             });
         }
         
-        return $jobsQuery->latest()->take(4)->get();
+        // Exclude jobs that the candidate has already applied to (regardless of status)
+        $appliedJobIds = JobApplication::where('candidate_id', $candidateProfile->id)
+            ->pluck('job_id')
+            ->toArray();
+            
+        if (!empty($appliedJobIds)) {
+            $jobsQuery->whereNotIn('id', $appliedJobIds);
+        }
+        
+        return $jobsQuery->latest()->take(2)->get();
     }
 }
