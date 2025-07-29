@@ -13,10 +13,10 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create roles
-        $adminRole = Role::create(['name' => 'Admin']);
-        $candidateRole = Role::create(['name' => 'Candidate']);
-        $organizationRole = Role::create(['name' => 'Organization']);
+        // Create roles (or get existing ones)
+        $adminRole = Role::firstOrCreate(['name' => 'Admin']);
+        $candidateRole = Role::firstOrCreate(['name' => 'Candidate']);
+        $organizationRole = Role::firstOrCreate(['name' => 'Organization']);
 
         // Create permissions for Candidates
         $candidatePermissions = [
@@ -27,7 +27,7 @@ class RoleSeeder extends Seeder
         ];
 
         foreach ($candidatePermissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission]);
         }
 
         // Create permissions for Organizations
@@ -38,7 +38,7 @@ class RoleSeeder extends Seeder
         ];
 
         foreach ($organizationPermissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission]);
         }
 
         // Assign permissions to roles
