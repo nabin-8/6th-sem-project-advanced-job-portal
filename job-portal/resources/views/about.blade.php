@@ -16,7 +16,7 @@
         <!-- Our Mission Section -->
         <div class="row align-items-center mb-5">
             <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0">
-                <img src="https://images.unsplash.com/photo-1552581234-26160f608093?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" class="img-fluid rounded shadow" alt="Our mission">
+                <img src="{{ asset('uploads/assets/about_banner2.jpg') }}" class="img-fluid rounded shadow" alt="Our mission">
             </div>
             <div class="col-lg-6 order-lg-1">
                 <div class="p-4 bg-white rounded shadow-sm">
@@ -31,7 +31,7 @@
         <!-- Who We Are Section -->
         <div class="row align-items-center mb-5">
             <div class="col-lg-6 mb-4 mb-lg-0">
-                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80" class="img-fluid rounded shadow" alt="Our team">
+                <img src="{{ asset('uploads/assets/about_banner1.jpg') }}" class="img-fluid rounded shadow" alt="Our team">
             </div>
             <div class="col-lg-6">
                 <div class="p-4 bg-white rounded shadow-sm">
