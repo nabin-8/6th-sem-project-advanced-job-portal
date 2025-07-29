@@ -1,0 +1,10 @@
+# Ignore all files in the uploads directory
+organization-banners/
+
+organization-logos/*
+!organization-logos/logo1.png
+!organization-logos/logo2.png
+!organization-logos/logo3.png
+
+profile-photos/
+resumes/
