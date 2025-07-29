@@ -49,4 +49,21 @@ class OrganizationProfile extends Model
     {
         return $this->hasMany(Job::class, 'organization_id');
     }
+    
+    /**
+     * Get the required fields for profile completion.
+     * 
+     * @return array
+     */
+    public static function getRequiredFields(): array
+    {
+        return [
+            'name',
+            'industry',
+            'description',
+            'location',
+            'website',
+            'logo'
+        ];
+    }
 }

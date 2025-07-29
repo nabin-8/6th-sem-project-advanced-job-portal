@@ -17,9 +17,8 @@
         <div class="col-lg-4">
             <div class="card shadow-sm mb-4">
                 <div class="card-body text-center">
-                    <div class="mb-3">
-                        @if ($profile->logo)
-                            <img src="{{ asset('storage/' . $profile->logo) }}" alt="{{ $profile->name }}" class="img-thumbnail" style="max-width: 150px; max-height: 150px;">
+                    <div class="mb-3">                        @if ($profile->logo)
+                            <img src="{{ asset('uploads/' . $profile->logo) }}" alt="{{ $profile->name }}" class="img-thumbnail" style="max-width: 150px; max-height: 150px;">
                         @else
                             <div class="bg-light rounded d-flex align-items-center justify-content-center mx-auto" style="width: 150px; height: 150px;">
                                 <i class="fas fa-building fa-4x text-secondary"></i>

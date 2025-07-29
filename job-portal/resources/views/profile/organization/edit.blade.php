@@ -17,10 +17,8 @@
             <!-- Profile completion card -->
             <div class="card mb-4 shadow-sm">
                 <div class="card-body">
-                    <h5 class="card-title">Profile Completion</h5>
-                    
-                    @php
-                        $completionFields = ['company_name', 'industry', 'description', 'location', 'website', 'logo'];
+                    <h5 class="card-title">Profile Completion</h5>                    @php
+                        $completionFields = \App\Models\OrganizationProfile::getRequiredFields();
                         $completedFields = 0;
                         
                         foreach ($completionFields as $field) {
@@ -75,16 +73,15 @@
             <div class="card shadow-sm">
                 <div class="card-body text-center">
                     <h5 class="card-title">Organization Preview</h5>
-                    <div class="mb-3">
-                        @if ($profile->logo)
-                            <img src="{{ asset('storage/' . $profile->logo) }}" alt="Company Logo" class="img-thumbnail" style="max-width: 150px; max-height: 150px; object-fit: contain;">
+                    <div class="mb-3">                        @if ($profile->logo)
+                            <img src="{{ asset('uploads/' . $profile->logo) }}" alt="Company Logo" class="img-thumbnail" style="max-width: 150px; max-height: 150px; object-fit: contain;">
                         @else
                             <div class="bg-light rounded d-flex align-items-center justify-content-center mx-auto" style="width: 150px; height: 150px;">
                                 <i class="fas fa-building fa-4x text-secondary"></i>
                             </div>
                         @endif
                     </div>
-                    <h5 class="font-weight-bold mb-1">{{ $profile->company_name ?? Auth::user()->name }}</h5>
+                    <h5 class="font-weight-bold mb-1">{{ $profile->name ?? Auth::user()->name }}</h5>
                     <p class="mb-2">{{ $profile->industry ?? 'Industry not specified' }}</p>
                     <p class="text-muted mb-3">
                         <i class="fas fa-map-marker-alt me-1"></i>
@@ -148,10 +145,9 @@
                             <!-- Basic Info Tab -->
                             <div class="tab-pane fade show active" id="basic" role="tabpanel" aria-labelledby="basic-tab">
                                 <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <label for="company_name" class="form-label">Company Name</label>
-                                        <input type="text" class="form-control @error('company_name') is-invalid @enderror" id="company_name" name="company_name" value="{{ old('company_name', $profile->company_name) }}" placeholder="Enter your company name">
-                                        @error('company_name')
+                                    <div class="col-md-6">                                        <label for="name" class="form-label">Company Name</label>
+                                        <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name', $profile->name) }}" placeholder="Enter your company name">
+                                        @error('name')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -206,10 +202,9 @@
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                    <div class="col-md-6">
-                                        <label for="contact_email" class="form-label">Public Contact Email</label>
-                                        <input type="email" class="form-control @error('contact_email') is-invalid @enderror" id="contact_email" name="contact_email" value="{{ old('contact_email', $profile->contact_email) }}" placeholder="contact@yourcompany.com">
-                                        @error('contact_email')
+                                    <div class="col-md-6">                                        <label for="email" class="form-label">Public Contact Email</label>
+                                        <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email', $profile->email) }}" placeholder="contact@yourcompany.com">
+                                        @error('email')
                                             <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                         <small class="text-muted">This email will be visible on your public profile</small>
@@ -270,10 +265,9 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                     <small class="text-muted">Upload a square logo in PNG, JPG format (max 2MB)</small>
-                                    
-                                    @if($profile->logo)
+                                      @if($profile->logo)
                                         <div class="mt-2 d-flex align-items-center">
-                                            <img src="{{ asset('storage/' . $profile->logo) }}" alt="Current Logo" style="max-width: 100px; max-height: 100px;" class="me-3">
+                                            <img src="{{ asset('uploads/' . $profile->logo) }}" alt="Current Logo" style="max-width: 100px; max-height: 100px;" class="me-3">
                                             <span>Current logo</span>
                                         </div>
                                     @endif
@@ -286,10 +280,9 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                     <small class="text-muted">Upload a banner image (recommended size: 1200x400px, max 3MB)</small>
-                                    
-                                    @if($profile->banner_image)
+                                      @if($profile->banner_image)
                                         <div class="mt-2">
-                                            <img src="{{ asset('storage/' . $profile->banner_image) }}" alt="Current Banner" style="max-width: 100%; height: auto; max-height: 200px;" class="img-thumbnail">
+                                            <img src="{{ asset('uploads/' . $profile->banner_image) }}" alt="Current Banner" style="max-width: 100%; height: auto; max-height: 200px;" class="img-thumbnail">
                                         </div>
                                     @endif
                                 </div>
@@ -301,11 +294,10 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                     <small class="text-muted">Upload company brochure or other documents (PDF format, max 5MB)</small>
-                                    
-                                    @if($profile->company_brochure)
+                                      @if($profile->company_brochure)
                                         <div class="mt-2 d-flex align-items-center">
                                             <i class="fas fa-file-pdf text-danger me-2"></i>
-                                            <a href="{{ asset('storage/' . $profile->company_brochure) }}" target="_blank">View Current Brochure</a>
+                                            <a href="{{ asset('uploads/' . $profile->company_brochure) }}" target="_blank">View Current Brochure</a>
                                         </div>
                                     @endif
                                 </div>

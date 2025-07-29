@@ -96,7 +96,7 @@
                     <div class="text-center mb-4">
                         <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
                             @if($organizationProfile->logo)
-                                <img src="{{ asset('storage/' . $organizationProfile->logo) }}" alt="{{ $organizationProfile->name }}" class="rounded-circle" style="width: 90px; height: 90px; object-fit: cover;">
+                                <img src="{{ asset('uploads/' . $organizationProfile->logo) }}" alt="{{ $organizationProfile->name }}" class="rounded-circle" style="width: 90px; height: 90px; object-fit: cover;">
                             @else
                                 <i class="fas fa-building fa-4x text-secondary"></i>
                             @endif
