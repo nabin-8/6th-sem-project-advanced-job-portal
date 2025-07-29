@@ -32,11 +32,23 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        
-                        <div class="mb-3">
+                          <div class="mb-3">
                             <label for="location" class="form-label">Location *</label>
                             <input type="text" class="form-control @error('location') is-invalid @enderror" id="location" name="location" value="{{ old('location', $job->location) }}" required>
                             @error('location')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="employment_type" class="form-label">Employment Type *</label>
+                            <select class="form-select @error('employment_type') is-invalid @enderror" id="employment_type" name="employment_type" required>
+                                <option value="">Select employment type</option>
+                                @foreach($employmentTypes as $type)
+                                    <option value="{{ $type }}" {{ old('employment_type', $job->employment_type) == $type ? 'selected' : '' }}>{{ ucfirst($type) }}</option>
+                                @endforeach
+                            </select>
+                            @error('employment_type')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -48,14 +60,26 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
-                        
-                        <div class="mb-3">
+                          <div class="mb-3">
                             <label for="status" class="form-label">Status *</label>
                             <select class="form-select @error('status') is-invalid @enderror" id="status" name="status" required>
                                 <option value="open" {{ (old('status', $job->status) === 'open') ? 'selected' : '' }}>Open</option>
                                 <option value="closed" {{ (old('status', $job->status) === 'closed') ? 'selected' : '' }}>Closed</option>
                             </select>
                             @error('status')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="category_id" class="form-label">Job Category *</label>
+                            <select class="form-select @error('category_id') is-invalid @enderror" id="category_id" name="category_id" required>
+                                <option value="">Select job category</option>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}" {{ old('category_id', $job->category_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('category_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>

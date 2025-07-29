@@ -14,7 +14,7 @@ class JobController extends Controller
      */
     public function index()
     {
-        $jobs = Job::with('organization.user')->latest()->paginate(10);
+        $jobs = Job::with(['organization.user', 'category'])->latest()->paginate(10);
         return view('admin.jobs.index', compact('jobs'));
     }
 
@@ -62,7 +62,9 @@ class JobController extends Controller
      */
     public function edit(Job $job)
     {
-        return view('admin.jobs.edit', compact('job'));
+        $categories = \App\Models\JobCategory::orderBy('name')->get();
+        $employmentTypes = ['full-time', 'part-time', 'contract', 'internship', 'remote'];
+        return view('admin.jobs.edit', compact('job', 'categories', 'employmentTypes'));
     }
 
     /**
@@ -77,6 +79,7 @@ class JobController extends Controller
             'location' => 'required|string|max:255',
             'salary' => 'nullable|string|max:100',
             'status' => 'required|in:open,closed',
+            'category_id' => 'required|exists:job_categories,id',
         ]);
 
         $job->update($request->all());

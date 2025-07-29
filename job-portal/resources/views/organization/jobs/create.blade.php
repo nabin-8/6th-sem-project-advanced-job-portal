@@ -52,8 +52,7 @@
                                 <div class="form-text">Specify the job location or "Remote" if applicable</div>
                             </div>
                         </div>
-                        
-                        <!-- Employment Type -->
+                          <!-- Employment Type -->
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="employment_type" class="form-label">Employment Type <span class="text-danger">*</span></label>
@@ -64,6 +63,22 @@
                                     @endforeach
                                 </select>
                                 @error('employment_type')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        
+                        <!-- Job Category -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="category_id" class="form-label">Job Category <span class="text-danger">*</span></label>
+                                <select class="form-select @error('category_id') is-invalid @enderror" id="category_id" name="category_id" required>
+                                    <option value="">Select job category</option>
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('category_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>

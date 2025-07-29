@@ -42,10 +42,10 @@
         <div class="card-body p-0">
             @if($jobs->count() > 0)
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
+                    <table class="table table-hover align-middle mb-0">                        <thead class="table-light">
                             <tr>
                                 <th>Job Title</th>
+                                <th>Category</th>
                                 <th>Location</th>
                                 <th>Applications</th>
                                 <th>Status</th>
@@ -62,6 +62,7 @@
                                             {{ $job->title }}
                                         </a>
                                     </td>
+                                    <td>{{ $job->category ? $job->category->name : 'N/A' }}</td>
                                     <td>{{ $job->location }}</td>
                                     <td>
                                         {{ $job->applications_count ?? 0 }}

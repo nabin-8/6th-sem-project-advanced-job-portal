@@ -16,8 +16,8 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Title</th>
-                            <th>Organization</th>
+                            <th>Title</th>                            <th>Organization</th>
+                            <th>Category</th>
                             <th>Location</th>
                             <th>Status</th>
                             <th>Applications</th>
@@ -31,6 +31,7 @@
                             <td>{{ $job->id }}</td>
                             <td>{{ $job->title }}</td>
                             <td>{{ $job->organization->company_name }}</td>
+                            <td>{{ $job->category ? $job->category->name : 'N/A' }}</td>
                             <td>{{ $job->location }}</td>
                             <td>
                                 <span class="badge bg-{{ $job->status === 'open' ? 'success' : 'secondary' }}">

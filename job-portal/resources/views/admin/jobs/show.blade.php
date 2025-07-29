@@ -46,19 +46,20 @@
                     <h5>Description</h5>
                     <div class="mb-4">
                         {!! nl2br(e($job->description)) !!}
-                    </div>
-
-                    <h5>Requirements</h5>
+                    </div>                    <h5>Requirements</h5>
                     <div class="mb-4">
-                        @if(is_array($job->requirements) && count($job->requirements))
-                            @foreach ($job->requirements as $requirement)
-                                <li>{{ $requirement }}</li>
-                            @endforeach
+                        @if(count($job->requirements) > 0)
+                            <ul>
+                                @foreach ($job->requirements as $requirement)
+                                    @if(!empty(trim($requirement)))
+                                        <li>{{ trim($requirement) }}</li>
+                                    @endif
+                                @endforeach
+                            </ul>
                         @else
-                            <p>{{ $job->requirements }}</p>
+                            <p>No specific requirements listed.</p>
                         @endif
-
-                    </div>                    <div class="d-flex mt-4">
+                    </div><div class="d-flex mt-4">
                         {{-- <form action="{{ route('admin.jobs.toggleStatus', $job) }}" method="POST" class="me-2">
                             @csrf
                             @method('PUT')
