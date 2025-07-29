@@ -87,6 +87,15 @@
                             <a class="nav-link {{ request()->routeIs('admin.jobs.*') ? 'active' : '' }}" href="{{ route('admin.jobs.index') }}">
                                 <i class="fas fa-briefcase"></i> Jobs
                             </a>
+                        </li>                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}" href="{{ route('admin.categories.index') }}">
+                                <i class="fas fa-tag"></i> Job Categories
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('admin.faqs.*') ? 'active' : '' }}" href="{{ route('admin.faqs.index') }}">
+                                <i class="fas fa-question-circle"></i> FAQs
+                            </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.applications.*') ? 'active' : '' }}" href="{{ route('admin.applications.index') }}">
@@ -143,11 +152,12 @@
                 @yield('content')
             </main>
         </div>
-    </div>
-
-    <!-- Bootstrap Bundle with Popper -->
+    </div>    <!-- Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery (required for sortable functionality) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
+    @yield('scripts')
     @stack('scripts')
 </body>
 </html>

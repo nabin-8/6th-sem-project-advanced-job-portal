@@ -169,14 +169,21 @@
                         @foreach($recent['applications'] as $application)
                         <tr>
                             <td>{{ $application->job->title }}</td>
-                            <td>{{ $application->candidate->user->name }}</td>
-                            <td>
+                            <td>{{ $application->candidate->user->name }}</td>                            <td>
                                 @if($application->status == 'pending')
                                     <span class="badge bg-warning text-dark">Pending</span>
-                                @elseif($application->status == 'approved')
-                                    <span class="badge bg-success">Approved</span>
+                                @elseif($application->status == 'reviewing')
+                                    <span class="badge bg-info">Reviewing</span>
+                                @elseif($application->status == 'interview')
+                                    <span class="badge bg-primary">Interview</span>
+                                @elseif($application->status == 'offered')
+                                    <span class="badge bg-success">Offered</span>
                                 @elseif($application->status == 'rejected')
                                     <span class="badge bg-danger">Rejected</span>
+                                @elseif($application->status == 'withdrawn')
+                                    <span class="badge bg-secondary">Withdrawn</span>
+                                @else
+                                    <span class="badge bg-light text-dark">{{ ucfirst($application->status) }}</span>
                                 @endif
                             </td>
                             <td>{{ $application->created_at->diffForHumans() }}</td>

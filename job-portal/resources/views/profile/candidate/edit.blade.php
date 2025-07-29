@@ -18,13 +18,20 @@
             <div class="card mb-4 shadow-sm">
                 <div class="card-body">
                     <h5 class="card-title">Profile Completion</h5>
-                    
-                    @php
-                        $completionFields = ['headline', 'bio', 'location', 'phone', 'skills', 'resume'];
+                      @php
+                        $completionFields = \App\Models\CandidateProfile::getRequiredFields();
                         $completedFields = 0;
                         
                         foreach ($completionFields as $field) {
-                            if (!empty($profile->$field)) {
+                            // Special handling for location field which may be stored as address
+                            if ($field === 'location' && !empty($profile->address)) {
+                                $completedFields++;
+                            }
+                            // Special handling for resume field which may be in resume_path
+                            elseif ($field === 'resume' && (!empty($profile->resume) || !empty($profile->resume_path))) {
+                                $completedFields++;
+                            }
+                            elseif (!empty($profile->$field)) {
                                 $completedFields++;
                             }
                         }
@@ -74,10 +81,9 @@
             <!-- Profile preview card -->
             <div class="card shadow-sm">
                 <div class="card-body text-center">
-                    <h5 class="card-title">Profile Preview</h5>
-                    <div class="mb-3">
+                    <h5 class="card-title">Profile Preview</h5>                    <div class="mb-3">
                         @if (Auth::user()->profile_photo)
-                            <img src="{{ asset('storage/' . Auth::user()->profile_photo) }}" alt="Profile" class="rounded-circle img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
+                            <img src="{{ asset('uploads/' . Auth::user()->profile_photo) }}" alt="Profile" class="rounded-circle img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
                         @else
                             <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 150px; height: 150px;">
                                 <i class="fas fa-user fa-4x text-secondary"></i>
@@ -261,12 +267,11 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                     <small class="text-muted">Upload your resume in PDF, DOC, or DOCX format (max 5MB)</small>
-                                    
-                                    @if($profile->resume)
+                                      @if($profile->resume)
                                         <div class="mt-2 d-flex align-items-center">
                                             <i class="fas fa-file-pdf text-danger me-2"></i>
                                             <span>Current resume:</span>
-                                            <a href="{{ asset('storage/' . $profile->resume) }}" target="_blank" class="ms-2">View Resume</a>
+                                            <a href="{{ asset('uploads/' . $profile->resume) }}" target="_blank" class="ms-2">View Resume</a>
                                             <span class="badge bg-success ms-2">Uploaded</span>
                                         </div>
                                     @else

@@ -5,7 +5,17 @@
 @section('page-header')
     <div class="row mb-4">
         <div class="col-12">
-            <h1 class="h3 mb-0 text-primary">My Profile</h1>
+            <h1 class="                                         <a href="{{ asset('uploads/' . $profile->resume) }}" target="_blank" class="btn btn-sm btn-outline-primary me-2">
+                                        <i class="fas fa-eye me-1"></i> View Resume
+                                    </a>
+                                    <a href="{{ asset('uploads/' . $profile->resume) }}" download class="btn btn-sm btn-outline-success">
+                                        <i class="fas fa-download me-1"></i> Download Resume
+                                    </a>                         <a href="{{ asset('uploads/' . $profile->resume) }}" target="_blank" class="btn btn-sm btn-outline-primary me-2">
+                                        <i class="fas fa-eye me-1"></i> View Resume
+                                    </a>
+                                    <a href="{{ asset('uploads/' . $profile->resume) }}" download class="btn btn-sm btn-outline-success">
+                                        <i class="fas fa-download me-1"></i> Download Resume
+                                    </a>0 text-primary">My Profile</h1>
             <p class="text-muted">View and manage your candidate profile</p>
         </div>
     </div>
@@ -16,10 +26,9 @@
         <!-- Profile Overview -->
         <div class="col-lg-4">
             <div class="card shadow-sm mb-4">
-                <div class="card-body text-center">
-                    <div class="mb-3">
+                <div class="card-body text-center">                    <div class="mb-3">
                         @if ($user->profile_photo)
-                            <img src="{{ asset('storage/' . $user->profile_photo) }}" alt="Profile" class="rounded-circle img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
+                            <img src="{{ asset('uploads/' . $user->profile_photo) }}" alt="Profile" class="rounded-circle img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
                         @else
                             <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto" style="width: 150px; height: 150px;">
                                 <i class="fas fa-user fa-4x text-secondary"></i>
@@ -169,11 +178,10 @@
                             <i class="fas fa-file-pdf fa-2x text-danger me-3"></i>
                             <div>
                                 <h6 class="mb-1">Resume</h6>
-                                <div class="d-flex">
-                                    <a href="{{ asset('storage/' . $profile->resume) }}" target="_blank" class="btn btn-sm btn-outline-primary me-2">
+                                <div class="d-flex">                                    <a href="{{ asset('uploads/' . $profile->resume) }}" target="_blank" class="btn btn-sm btn-outline-primary me-2">
                                         <i class="fas fa-eye me-1"></i>View
                                     </a>
-                                    <a href="{{ asset('storage/' . $profile->resume) }}" download class="btn btn-sm btn-outline-success">
+                                    <a href="{{ asset('uploads/' . $profile->resume) }}" download class="btn btn-sm btn-outline-success">
                                         <i class="fas fa-download me-1"></i>Download
                                     </a>
                                 </div>
