@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Models\JobCategory;
+use Illuminate\Support\Str;
 
 class VacanciesSeeder extends Seeder
 {
@@ -16,11 +18,20 @@ class VacanciesSeeder extends Seeder
     public function run()
     {
         $now = Carbon::now();
+        $deadline = Carbon::now()->addDays(30);
+
+        // Get category IDs
+        $technologyCategory = JobCategory::where('name', 'Technology')->first();
+        $designCategory = JobCategory::where('name', 'Design')->first();
+        $administrativeCategory = JobCategory::where('name', 'Administrative')->first();
+        $marketingCategory = JobCategory::where('name', 'Marketing')->first();
 
         DB::table('vacancies')->insert([
             [
                 'organization_id' => 1,
+                'category_id'     => $technologyCategory->id,
                 'title'           => 'Frontend Developer',
+                'slug'            => 'frontend-developer-' . uniqid(),
                 'description'     => 'Build and maintain responsive web interfaces using modern JavaScript frameworks.',
                 'requirements'    => json_encode([
                     '3+ years experience with React or Vue.js',
@@ -29,14 +40,20 @@ class VacanciesSeeder extends Seeder
                     'Experience with Webpack or Vite',
                 ]),
                 'location'        => 'Kathmandu',
-                'salary'          => '45000',
+                'employment_type' => 'Full-time',
+                'salary_min'      => 40000,
+                'salary_max'      => 55000,
+                'application_deadline' => $deadline,
+                'is_featured'     => true,
                 'status'          => 'open',
                 'created_at'      => $now,
                 'updated_at'      => $now,
             ],
             [
                 'organization_id' => 1,
+                'category_id'     => $technologyCategory->id,
                 'title'           => 'Backend Developer (Node.js)',
+                'slug'            => 'backend-developer-nodejs-' . uniqid(),
                 'description'     => 'Design and implement server-side logic and APIs for our SaaS platform.',
                 'requirements'    => json_encode([
                     '2+ years experience with Node.js and Express',
@@ -45,14 +62,20 @@ class VacanciesSeeder extends Seeder
                     'Knowledge of Docker and containerization',
                 ]),
                 'location'        => 'Pokhara',
-                'salary'          => '50000',
+                'employment_type' => 'Full-time',
+                'salary_min'      => 45000,
+                'salary_max'      => 60000,
+                'application_deadline' => $deadline,
+                'is_featured'     => false,
                 'status'          => 'open',
                 'created_at'      => $now,
                 'updated_at'      => $now,
             ],
             [
                 'organization_id' => 1,
+                'category_id'     => $technologyCategory->id,
                 'title'           => 'Full Stack Engineer',
+                'slug'            => 'full-stack-engineer-' . uniqid(),
                 'description'     => 'End-to-end development from database design to UI implementation.',
                 'requirements'    => json_encode([
                     'Proficient in JavaScript (Node.js & React)',
@@ -61,14 +84,20 @@ class VacanciesSeeder extends Seeder
                     'Ability to write unit and integration tests',
                 ]),
                 'location'        => 'Chitwan',
-                'salary'          => '60000',
+                'employment_type' => 'Full-time',
+                'salary_min'      => 55000,
+                'salary_max'      => 70000,
+                'application_deadline' => $deadline,
+                'is_featured'     => true,
                 'status'          => 'open',
                 'created_at'      => $now,
                 'updated_at'      => $now,
             ],
             [
                 'organization_id' => 1,
+                'category_id'     => $technologyCategory->id,
                 'title'           => 'DevOps Engineer',
+                'slug'            => 'devops-engineer-' . uniqid(),
                 'description'     => 'Maintain and optimize our cloud infrastructure and CI/CD workflows.',
                 'requirements'    => json_encode([
                     'Experience with AWS or Azure',
@@ -77,14 +106,20 @@ class VacanciesSeeder extends Seeder
                     'Monitoring tools like Prometheus/Grafana',
                 ]),
                 'location'        => 'Biratnagar',
-                'salary'          => '55000',
+                'employment_type' => 'Full-time',
+                'salary_min'      => 50000,
+                'salary_max'      => 65000,
+                'application_deadline' => $deadline,
+                'is_featured'     => false,
                 'status'          => 'open',
                 'created_at'      => $now,
                 'updated_at'      => $now,
             ],
             [
                 'organization_id' => 1,
+                'category_id'     => $technologyCategory->id,
                 'title'           => 'Data Analyst',
+                'slug'            => 'data-analyst-' . uniqid(),
                 'description'     => 'Analyze user and system data to drive product decisions and improvements.',
                 'requirements'    => json_encode([
                     'Proficient in SQL and Excel',
@@ -93,14 +128,20 @@ class VacanciesSeeder extends Seeder
                     'Basic Python or R scripting',
                 ]),
                 'location'        => 'Lalitpur',
-                'salary'          => '40000',
+                'employment_type' => 'Full-time',
+                'salary_min'      => 35000,
+                'salary_max'      => 50000,
+                'application_deadline' => $deadline,
+                'is_featured'     => false,
                 'status'          => 'open',
                 'created_at'      => $now,
                 'updated_at'      => $now,
             ],
             [
                 'organization_id' => 2,
+                'category_id'     => $designCategory->id,
                 'title'           => 'UI/UX Designer',
+                'slug'            => 'ui-ux-designer-' . uniqid(),
                 'description'     => 'Design intuitive user interfaces and engaging user experiences.',
                 'requirements'    => json_encode([
                     '3+ years experience in UI/UX design',
@@ -109,14 +150,20 @@ class VacanciesSeeder extends Seeder
                     'Knowledge of responsive design principles',
                 ]),
                 'location'        => 'Kathmandu',
-                'salary'          => '48000',
+                'employment_type' => 'Full-time',
+                'salary_min'      => 40000,
+                'salary_max'      => 55000,
+                'application_deadline' => $deadline,
+                'is_featured'     => true,
                 'status'          => 'open',
                 'created_at'      => $now,
                 'updated_at'      => $now,
             ],
             [
                 'organization_id' => 2,
+                'category_id'     => $technologyCategory->id,
                 'title'           => 'Mobile App Developer (Flutter)',
+                'slug'            => 'mobile-app-developer-flutter-' . uniqid(),
                 'description'     => 'Develop cross-platform mobile applications using Flutter.',
                 'requirements'    => json_encode([
                     '2+ years experience with Flutter and Dart',
@@ -125,14 +172,20 @@ class VacanciesSeeder extends Seeder
                     'Familiarity with CI/CD for mobile apps',
                 ]),
                 'location'        => 'Pokhara',
-                'salary'          => '52000',
+                'employment_type' => 'Contract',
+                'salary_min'      => 45000,
+                'salary_max'      => 60000,
+                'application_deadline' => $deadline,
+                'is_featured'     => false,
                 'status'          => 'open',
                 'created_at'      => $now,
                 'updated_at'      => $now,
             ],
             [
                 'organization_id' => 2,
+                'category_id'     => $technologyCategory->id,
                 'title'           => 'QA Engineer',
+                'slug'            => 'qa-engineer-' . uniqid(),
                 'description'     => 'Ensure software quality through testing and automation.',
                 'requirements'    => json_encode([
                     'Experience with Selenium or Cypress',
@@ -141,14 +194,20 @@ class VacanciesSeeder extends Seeder
                     'Familiarity with CI pipelines',
                 ]),
                 'location'        => 'Chitwan',
-                'salary'          => '45000',
+                'employment_type' => 'Full-time',
+                'salary_min'      => 40000,
+                'salary_max'      => 50000,
+                'application_deadline' => $deadline,
+                'is_featured'     => false,
                 'status'          => 'open',
                 'created_at'      => $now,
                 'updated_at'      => $now,
             ],
             [
                 'organization_id' => 3,
+                'category_id'     => $administrativeCategory->id,
                 'title'           => 'Systems Administrator',
+                'slug'            => 'systems-administrator-' . uniqid(),
                 'description'     => 'Manage and maintain company servers and network infrastructure.',
                 'requirements'    => json_encode([
                     '3+ years in system administration',
@@ -157,14 +216,20 @@ class VacanciesSeeder extends Seeder
                     'Familiarity with virtualization (VMware, Hyper-V)',
                 ]),
                 'location'        => 'Biratnagar',
-                'salary'          => '53000',
+                'employment_type' => 'Full-time',
+                'salary_min'      => 48000,
+                'salary_max'      => 62000,
+                'application_deadline' => $deadline,
+                'is_featured'     => false,
                 'status'          => 'open',
                 'created_at'      => $now,
                 'updated_at'      => $now,
             ],
             [
                 'organization_id' => 3,
+                'category_id'     => $marketingCategory->id,
                 'title'           => 'Product Manager',
+                'slug'            => 'product-manager-' . uniqid(),
                 'description'     => 'Lead product vision, roadmap, and feature prioritization.',
                 'requirements'    => json_encode([
                     'Proven experience as a Product Manager',
@@ -173,7 +238,11 @@ class VacanciesSeeder extends Seeder
                     'Familiarity with Agile methodologies',
                 ]),
                 'location'        => 'Lalitpur',
-                'salary'          => '65000',
+                'employment_type' => 'Full-time',
+                'salary_min'      => 60000,
+                'salary_max'      => 80000,
+                'application_deadline' => $deadline,
+                'is_featured'     => true,
                 'status'          => 'open',
                 'created_at'      => $now,
                 'updated_at'      => $now,

@@ -26,7 +26,9 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             OrganizationProfilesSeeder::class,
             CandidateProfilesSeeder::class,
+            JobCategorySeeder::class,
             VacanciesSeeder::class,
+            FaqSeeder::class,
         ]);
     }
 }
