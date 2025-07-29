@@ -142,10 +142,8 @@
                                                 <p class="text-danger">This action cannot be undone.</p>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                <form action="{{ route('applications.withdraw', $application->id) }}" method="POST">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>                                                <form action="{{ route('applications.withdraw', $application->id) }}" method="POST">
                                                     @csrf
-                                                    @method('PUT')
                                                     <button type="submit" class="btn btn-danger">Withdraw Application</button>
                                                 </form>
                                             </div>
@@ -243,7 +241,7 @@
                             <i class="far fa-file-pdf me-2"></i>
                             Your current resume was sent with this application.
                             @if(auth()->user()->candidateProfile->resume)
-                                <a href="{{ asset('storage/' . auth()->user()->candidateProfile->resume) }}" target="_blank" class="ms-2">View Resume</a>
+                                <a href="{{ asset('uploads/' . auth()->user()->candidateProfile->resume) }}" target="_blank" class="ms-2">View Resume</a>
                             @endif
                         </p>
                     </div>
@@ -304,7 +302,7 @@
                     <div class="text-center mb-3">
                         <div class="bg-light rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
                             @if(isset($application->job->organization->logo))
-                                <img src="{{ asset('storage/' . $application->job->organization->logo) }}" alt="{{ $application->job->organization->name }}" class="rounded-circle" style="width: 70px; height: 70px; object-fit: cover;">
+                                <img src="{{ asset('uploads/' . $application->job->organization->logo) }}" alt="{{ $application->job->organization->name }}" class="rounded-circle" style="width: 70px; height: 70px; object-fit: cover;">
                             @else
                                 <i class="fas fa-building fa-3x text-secondary"></i>
                             @endif

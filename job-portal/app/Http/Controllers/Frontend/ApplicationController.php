@@ -189,6 +189,9 @@ class ApplicationController extends Controller
                 ->with('error', 'The application does not belong to this job.');
         }
         
+        // Load candidate with user relationship to access all needed data
+        $application->load('candidate.user');
+        
         return view('organization.applications.show', [
             'job' => $job,
             'application' => $application

@@ -28,16 +28,19 @@
             <div class="card shadow-sm mb-4">
                 <div class="card-body text-center">
                     @if(isset($application->candidate->user->profile_photo))
-                        <img src="{{ asset('storage/' . $application->candidate->user->profile_photo) }}" alt="Profile" 
-                             class="rounded-circle img-thumbnail mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                        <a href="{{ route('candidate.profile', $application->candidate->id) }}">
+                            <img src="{{ asset('uploads/' . $application->candidate->user->profile_photo) }}" alt="Profile" 
+                                class="rounded-circle img-thumbnail mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                        </a>
                     @else
                         <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-3"
                              style="width: 120px; height: 120px;">
                             <i class="fas fa-user fa-3x text-secondary"></i>
                         </div>
                     @endif
-                    
-                    <h5 class="mb-1">{{ $application->candidate->user->name }}</h5>
+                    <a href="{{ route('candidate.profile', $application->candidate->id) }}">
+                        <h5 class="mb-1">{{ $application->candidate->user->name }}</h5>
+                    </a>
                     <p class="text-muted mb-2">{{ $application->candidate->headline ?? 'Candidate' }}</p>
                     
                     <div class="d-flex justify-content-center gap-2 mb-3">
@@ -139,7 +142,7 @@
                                 <option value="interview" {{ $application->status == 'interview' ? 'selected' : '' }}>Interview</option>
                                 <option value="offered" {{ $application->status == 'offered' ? 'selected' : '' }}>Offered</option>
                                 <option value="rejected" {{ $application->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                                <option value="withdrawn" {{ $application->status == 'withdrawn' ? 'selected' : '' }}>Withdrawn</option>
+                                {{-- <option value="withdrawn" {{ $application->status == 'withdrawn' ? 'selected' : '' }}>Withdrawn</option> --}}
                             </select>
                         </div>
                           <div class="mb-3">
@@ -171,21 +174,20 @@
                     @endif
                 </div>
             </div>
-            
-            <!-- Resume -->
+              <!-- Resume -->
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-white d-flex align-items-center justify-content-between">
                     <h5 class="card-title mb-0">Resume</h5>
-                    @if($application->resume_path)
-                        <a href="{{ asset('storage/' . $application->resume_path) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                    @if($application->candidate->resume ?? $application->candidate->resume_path)
+                        <a href="{{ asset('uploads/' . ($application->candidate->resume ?? $application->candidate->resume_path)) }}" target="_blank" class="btn btn-sm btn-outline-primary">
                             <i class="fas fa-download me-1"></i> Download Resume
                         </a>
                     @endif
                 </div>
                 <div class="card-body">
-                    @if($application->resume_path)
+                    @if($application->candidate->resume ?? $application->candidate->resume_path)
                         <div class="embed-responsive">
-                            <iframe src="{{ asset('storage/' . $application->resume_path) }}" width="100%" height="600px"></iframe>
+                            <iframe src="{{ asset('uploads/' . ($application->candidate->resume ?? $application->candidate->resume_path)) }}" width="100%" height="600px"></iframe>
                         </div>
                     @else
                         <div class="text-center py-4">

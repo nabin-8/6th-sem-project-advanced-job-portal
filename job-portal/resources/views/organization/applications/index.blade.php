@@ -107,11 +107,10 @@
                     <tbody>
                         @foreach($applications as $application)
                             <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
+                                <td>                                    <div class="d-flex align-items-center">
                                         <div class="flex-shrink-0 me-3">
                                             @if(isset($application->candidate->user->profile_photo))
-                                                <img src="{{ asset('storage/' . $application->candidate->user->profile_photo) }}" alt="Profile" class="rounded-circle" width="40" height="40">
+                                                <img src="{{ asset('uploads/' . $application->candidate->user->profile_photo) }}" alt="Profile" class="rounded-circle" width="40" height="40" style="object-fit: cover;">
                                             @else
                                                 <div class="rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
                                                     <i class="fas fa-user text-secondary"></i>
